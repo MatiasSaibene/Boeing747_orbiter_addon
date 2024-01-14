@@ -1,4 +1,4 @@
-//Copyright (c)2023 Matías Saibene
+//Copyright (c) Matías Saibene
 //Licenced under the MIT Licence
 
 //==========================================
@@ -67,22 +67,20 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
 
     landing_gear_proc = 0.0;
 
-    engines_proc = 0.0;
-
-    landing_gear_status = GEAR_DOWN;
+	landing_gear_status = GEAR_DOWN;
 
     b747sp_mesh = oapiLoadMesh("Boeing_747SP");
 
-    DefineAnimations();
-
+	DefineAnimations();
 }
 
 //Destructor
 B747SP::~B747SP(){
-    
+
     oapiDeleteMesh(b747sp_mesh);
 
     this->VESSEL4::~VESSEL4();
+
 }
 
 void B747SP::DefineAnimations(void){
@@ -381,31 +379,19 @@ void B747SP::DefineAnimations(void){
     AddAnimationComponent(anim_raileron, 0, 1, &RAileron);
 }
 
-
-// Overloaded callback functions
-// Set the capabilities of the vessel class
 void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
 
-    //Define thrusters (engines)
-    //THRUSTER_HANDLE th_main[4], th_retro[4];
-    //THGROUP_HANDLE thg_main, thg_retro;
-
-    //Add a mesh for the visual
-    AddMesh(b747sp_mesh);
-
-    //Physical vessel resources
+    //Physical vessel parameters
     SetSize(B747SP_SIZE);
     SetEmptyMass(B747SP_EMPTYMASS);
     SetCrossSections(B747SP_CS);
     SetPMI(B747SP_PMI);
-    SetMaxWheelbrakeForce(25e5);
+    SetMaxWheelbrakeForce(89e3);
     SetRotDrag(_V(10, 10, 2.5));
-    SetNosewheelSteering(true);
 
-    //Propellant resources
     PROPELLANT_HANDLE JET_A1 = CreatePropellantResource(B747SP_FUELMASS);
 
-    th_main[0] = CreateThruster((ENG1_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
+	th_main[0] = CreateThruster((ENG1_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[1] = CreateThruster((ENG2_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[2] = CreateThruster((ENG3_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[3] = CreateThruster((ENG4_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
@@ -417,19 +403,19 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
     thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
 
-    //Contrail effect on engines
+	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
         PARTICLESTREAMSPEC::EMISSIVE,
 		PARTICLESTREAMSPEC::LVL_PLIN, -1.0, 25.0,
 		PARTICLESTREAMSPEC::ATM_PLIN, 
     };
-    AddParticleStream(&engines_contrails, (ENG1_Location), _V(0, 0, -1), &lvlcontrailengines);
+	AddParticleStream(&engines_contrails, (ENG1_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG2_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG3_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG4_Location), _V(0, 0, -1), &lvlcontrailengines);
 
-    lwing = CreateAirfoil3(LIFT_VERTICAL, (Left_wing_Location), VLiftCoeff, 0, B747SP_VLIFT_C, (B747SP_VLIFT_S*4), B747SP_VLIFT_A);
+	lwing = CreateAirfoil3(LIFT_VERTICAL, (Left_wing_Location), VLiftCoeff, 0, B747SP_VLIFT_C, (B747SP_VLIFT_S*4), B747SP_VLIFT_A);
 
     rwing = CreateAirfoil3(LIFT_VERTICAL,(Right_wing_Location), VLiftCoeff, 0, B747SP_VLIFT_C,(B747SP_VLIFT_S*4), B747SP_VLIFT_A);
 
@@ -450,6 +436,43 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
 
     CreateControlSurface3(AIRCTRL_RUDDER, 20.6937, 1.7, (Rudder_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_rudder);
 
+    //Add the mesh
+    AddMesh(b747sp_mesh);
+
+}
+
+int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
+
+    if(key == OAPI_KEY_G && down){
+        SetGearDown();
+        return 1;
+    }
+    return 0;
+}
+
+//Load landing gear status from scenario file
+void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
+    
+    char *line;
+
+    while(oapiReadScenario_nextline(scn, line)){
+        if(!strncasecmp(line, "GEAR", 4)){
+            sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
+            SetAnimation(anim_landing_gear, landing_gear_proc);
+        } else {
+            ParseScenarioLineEx(line, vs);
+        }
+    }
+}
+
+void B747SP::clbkSaveState(FILEHANDLE scn){
+
+    char cbuf[256];
+
+    SaveDefaultState(scn);
+    sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
+    oapiWriteScenario_string(scn, "GEAR", cbuf);
+    
 }
 
 //////////Logic for animations
@@ -482,7 +505,7 @@ double B747SP::UpdateLvlEnginesContrail(){
     double machnumber = GetMachNumber();
     double altitude = GetAltitude();
 
-    if((machnumber > 0.5) && (altitude > 10000)){
+    if((machnumber > 0.5) && ((altitude > 10000) && (altitude < 15000))){
         return 1.0;
     } else {
         return 0.0;
@@ -512,43 +535,8 @@ void B747SP::clbkPreStep(double simt, double simdt, double mjd){
     }
 }
 
-
-
-///////////Logic for keys pressed, etc.
-
-int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
-
-    if(key == OAPI_KEY_G && down){
-        SetGearDown();
-        return 1;
-    }
-    return 0;
-}
-
-//Load landing gear status from scenario file
-void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
-
-    char *line;
-
-    while(oapiReadScenario_nextline(scn, line)){
-        if(!_strnicmp(line, "GEAR", 4)){
-            sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
-            SetAnimation(anim_landing_gear, landing_gear_proc);
-        }
-    }
-}
-
-void B747SP::clbkSaveState(FILEHANDLE scn){
-
-    char cbuf[256];
-
-    SaveDefaultState(scn);
-    sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
-    oapiWriteScenario_string(scn, "GEAR", cbuf);
-
-}
-
 DLLCLBK void InitModule(MODULEHANDLE hModule){
+
 
 }
 
@@ -562,13 +550,13 @@ DLLCLBK void ExitModule(MODULEHANDLE *hModule){
 
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel){
     
-    return new B747SP(hvessel, flightmodel);
+	return new B747SP(hvessel, flightmodel);
 
 }
 
 /////////////Vessel memory cleanup
 DLLCLBK void ovcExit(VESSEL *vessel){
     
-    if(vessel) delete(B747SP*)vessel;
-
+	if(vessel) delete(B747SP*)vessel;
+	
 }

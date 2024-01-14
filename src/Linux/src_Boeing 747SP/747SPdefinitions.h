@@ -1,11 +1,11 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Sat Jan  6 15:34:36 2024
+// Date: Sun Jan 14 13:16:25 2024
 
 
 #include "Orbitersdk.h"
 
-#ifndef __747SPDEFINITIONS_H
-#define __747SPDEFINITIONS_H
+#ifndef __747SPdefinitions_H
+#define __747SPdefinitions_H
 
 
     const int TXIDX_Fuselage_dds = 1;

@@ -82,44 +82,31 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
     {(TDP14_Location), 5e6, 5e6, 3.0},
 };
 
-//B747SP class interface
+//B747100 class interface
 
-class B747SP: public VESSEL4{
+class B747SP : public VESSEL4{
 
     public:
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
-        //enum DoorStatus{DOOR_CLOSED, DOOR_OPEN, DOOR_CLOSING, DOOR_OPENING} door_status;
 
         B747SP(OBJHANDLE hVessel, int flightmodel);
         virtual ~B747SP();
 
         void DefineAnimations(void);
         void ActivateLandingGear(LandingGearStatus action);
-        //void ActivateDoor(DoorStatus actiondoor);
         void SetGearDown(void);
-        //void CloseDoor(void);
         void UpdateLandingGearAnimation(double);
-        //void UpdateDoorAnimation(double);
         double UpdateLvlEnginesContrail();
 
-        //bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, int viewW, int viewH) override;
-        //void ScalePanel (PANELHANDLE hPanel, uint16_t viewW, uint16_t viewH);
-        //void DefineMainPanel(PANELHANDLE hPanel);
-
         void clbkSetClassCaps(FILEHANDLE cfg) override;
-        void clbkLoadStateEx(FILEHANDLE scn, void *vs)override;
+        void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
-        void clbkPreStep(double simt, double simdt, double mjd) override;
-        void clbkPostStep(double, double, double)override;
+        void clbkPreStep(double, double, double) override;
+        void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
-        double lvlcontrailengines;
-        THRUSTER_HANDLE th_main[4], th_retro[4];
-        THGROUP_HANDLE thg_main, thg_retro;
-        static SURFHANDLE panel2dtex;
-        
-    
     private:
+
         unsigned int anim_landing_gear;
         unsigned int anim_door;
         unsigned int anim_laileron;
@@ -129,15 +116,15 @@ class B747SP: public VESSEL4{
         unsigned int anim_rudder;
         unsigned int anim_engines;
 
+        double lvlcontrailengines;
         double landing_gear_proc;
-        double door_proc;
         double engines_proc;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
+        THRUSTER_HANDLE th_main[4], th_retro[4];
+        THGROUP_HANDLE thg_main, thg_retro;
         MESHHANDLE b747sp_mesh;
-        
-
 };
 
-#endif //!__BOEING747SP_H
+#endif
