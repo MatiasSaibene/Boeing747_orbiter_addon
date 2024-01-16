@@ -9,12 +9,13 @@
 //
 //==========================================
 
+#include <strings.h>
 #define ORBITER_MODULE
 #include "Boeing747SP.h"
 #include <cstring>
 #include <cstdio>
-#include <cstdint>
 #include <algorithm>
+
 
 // 1. vertical lift component
 
@@ -69,15 +70,23 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
 
 	landing_gear_status = GEAR_DOWN;
 
-    b747sp_mesh = oapiLoadMesh("Boeing_747SP");
-
 	DefineAnimations();
+
+    b747sp_mesh = NULL;
+
+    skinpath[0] = '\0';
+    for (int i = 0; i < 5; i++)
+        skin[i] = 0;
+
 }
 
 //Destructor
 B747SP::~B747SP(){
 
     oapiDeleteMesh(b747sp_mesh);
+
+    for(int i = 0; i < 5; i++)
+        if(skin[i]) oapiReleaseTexture(skin[i]);
 
     this->VESSEL4::~VESSEL4();
 
@@ -437,8 +446,44 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
     CreateControlSurface3(AIRCTRL_RUDDER, 20.6937, 1.7, (Rudder_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_rudder);
 
     //Add the mesh
-    AddMesh(b747sp_mesh);
+    SetMeshVisibilityMode (AddMesh (b747sp_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747SP")), MESHVIS_EXTERNAL);
+    //AddMesh(b747sp_mesh);
 
+}
+
+void B747SP::clbkVisualCreated(VISHANDLE vis, int refcount){
+
+    visual = vis;
+
+    b747sp_dmesh = GetDevMesh(vis, 0);
+
+    ApplyLivery();
+
+}
+
+void B747SP::clbkVisualDestroyed(VISHANDLE vis, int refcount){
+
+    visual = NULL;
+    b747sp_dmesh = NULL;
+
+}
+
+void B747SP::ApplyLivery() {
+
+    if(!b747sp_dmesh) return;
+
+    if(skin[0]) oapiSetTexture(b747sp_dmesh, 1, skin[0]);
+
+    if(skin[1]) oapiSetTexture(b747sp_dmesh, 2, skin[1]);
+
+    if(skin[2]) oapiSetTexture(b747sp_dmesh, 3, skin[2]);
+
+    if(skin[3]) oapiSetTexture(b747sp_dmesh, 4, skin[3]);
+
+    if(skin[4]) oapiSetTexture(b747sp_dmesh, 9, skin[4]);
+
+    //fuselage_tex = oapiLoadTexture(skinPath);
+    //oapiSetTexture(b747sp_dmesh, 1, fuselage_tex);
 }
 
 int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
@@ -450,7 +495,7 @@ int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
     return 0;
 }
 
-//Load landing gear status from scenario file
+//Load vessel status from scenario file
 void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
     
     char *line;
@@ -459,6 +504,23 @@ void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+        } else if(!strncasecmp(line, "SKIN", 4)){
+            sscanf(line+4, "%s", skinpath);
+            char fname[256];
+            strcpy(fname, "Boeing_747\\B747SP\\Skins\\");
+            strcat(fname, skinpath);
+            int n = strlen(fname); fname[n++] = '\\';
+
+            strcpy(fname+n, "Fuselage.dds"); skin[0] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Vertical_stabilizer.dds"); skin[1] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Right_wing.dds"); skin[2] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "ENG1.dds"); skin[3] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Left_wing.dds"); skin[4] = oapiLoadTexture(fname);
+
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -473,6 +535,8 @@ void B747SP::clbkSaveState(FILEHANDLE scn){
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
+    if (skinpath[0])
+		oapiWriteScenario_string (scn, "SKIN", skinpath);
 }
 
 //////////Logic for animations
@@ -534,6 +598,8 @@ void B747SP::clbkPreStep(double simt, double simdt, double mjd){
         SetAnimation(anim_engines, 0.0);
     }
 }
+
+////////////////////////
 
 DLLCLBK void InitModule(MODULEHANDLE hModule){
 

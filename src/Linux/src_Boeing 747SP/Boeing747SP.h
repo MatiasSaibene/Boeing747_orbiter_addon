@@ -98,12 +98,23 @@ class B747SP : public VESSEL4{
         void UpdateLandingGearAnimation(double);
         double UpdateLvlEnginesContrail();
 
+        void ApplyLivery();
+
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
+
+        void clbkVisualCreated(VISHANDLE vis, int refcount) override;
+        void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
+
+        VISHANDLE visual;
+        MESHHANDLE b747sp_mesh;  //Mesh handle
+        DEVMESHHANDLE b747sp_dmesh;  //Mesh template handle
+        SURFHANDLE fuselage_tex;  //Textures handle
+        
 
     private:
 
@@ -124,7 +135,9 @@ class B747SP : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        MESHHANDLE b747sp_mesh;
+        SURFHANDLE skin[5];
+        char skinpath[64];
+
 };
 
 #endif
