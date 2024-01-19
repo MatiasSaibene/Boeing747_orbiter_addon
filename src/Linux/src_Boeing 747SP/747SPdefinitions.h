@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Sun Jan 14 13:16:25 2024
+// Date: Wed Jan 17 12:02:38 2024
 
 
 #include "Orbitersdk.h"
@@ -155,6 +155,15 @@
     constexpr VECTOR3 Axis_left_landing_gear_door2_Location =     {-1.9843, 1.9285, 1.6454};
     constexpr VECTOR3 Axis_right_landing_gear_door2_Location =     {1.9855, 1.9285, 1.6454};
     constexpr VECTOR3 Axis_landing_gear_right_door_1_Location =     {0.5872, 1.8746, 1.5900};
+    constexpr VECTOR3 Beacon2_right_wing_Location =     {28.6913, 5.5589, -10.0592};
+    constexpr VECTOR3 Beacon1_left_wing_Location =     {-28.7126, 5.5589, -10.0592};
+    constexpr VECTOR3 Beacon3_upper_deck_Location =     {0.0413, 9.5778, 16.5148};
+    constexpr VECTOR3 Beacon4_belly_landing_gear_Location =     {0.0413, 1.7715, 4.7940};
+    constexpr VECTOR3 Beacon5_APU_Location =     {0.0413, 6.3946, -25.5689};
+    constexpr VECTOR3 LIGHT2_Location =     {-4.0002, 3.5567, 12.3066};
+    constexpr VECTOR3 LIGHT1_Location =     {-5.0002, 3.5567, 11.4303};
+    constexpr VECTOR3 LIGHT3_Location =     {4.0000, 3.5567, 12.3066};
+    constexpr VECTOR3 LIGHT4_Location =     {4.9998, 3.5567, 11.4303};
 
 
 #endif

@@ -9,13 +9,16 @@
 //
 //==========================================
 
-#include <strings.h>
 #define ORBITER_MODULE
 #include "Boeing747SP.h"
 #include <cstring>
 #include <cstdio>
 #include <algorithm>
 
+
+bool parkingBrakeEnabled;
+bool lights_on;
+static int currentSkin = 0;
 
 // 1. vertical lift component
 
@@ -83,13 +86,14 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
 //Destructor
 B747SP::~B747SP(){
 
-    oapiDeleteMesh(b747sp_mesh);
+    /*oapiDeleteMesh(b747sp_mesh);
 
     for(int i = 0; i < 5; i++)
         if(skin[i]) oapiReleaseTexture(skin[i]);
 
-    this->VESSEL4::~VESSEL4();
-
+    for(int i = 0; i < 5; i++)
+        if(skin[i]) oapiDestroySurface(skin[i]);
+*/
 }
 
 void B747SP::DefineAnimations(void){
@@ -449,6 +453,24 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
     SetMeshVisibilityMode (AddMesh (b747sp_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747SP")), MESHVIS_EXTERNAL);
     //AddMesh(b747sp_mesh);
 
+    //Define beacons
+
+    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
+    static VECTOR3 beaconcol = {0, 1, 0};
+
+    for(int i = 0; i < 5; i++){
+		beacon[i].shape = BEACONSHAPE_STAR;
+		beacon[i].pos = beaconpos+i;
+		beacon[i].col = &beaconcol;
+		beacon[i].size = 1;
+		beacon[i].falloff = 0.4;
+		beacon[i].period = 1;
+		beacon[i].duration = 0.1;
+		beacon[i].tofs = 0.2;
+		beacon[i].active = false;
+		AddBeacon(beacon+i);
+	}
+
 }
 
 void B747SP::clbkVisualCreated(VISHANDLE vis, int refcount){
@@ -467,8 +489,101 @@ void B747SP::clbkVisualDestroyed(VISHANDLE vis, int refcount){
     b747sp_dmesh = NULL;
 
 }
+/*
+void B747SP::ChangeLivery() {
+    const int skinnumber = 5;
+    const char item[5] = "SKIN";
+    char skinname[256];
+    const char fname[43] = "skins.txt";
+    const char skindir[34] = "Boeing_747\\B747SP\\Skins\\";
+    const char texname_fus[14] = "\\Fuselage.dds";
+    char completedir[256];
+    const char SKINLIST[][6] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5"};
 
-void B747SP::ApplyLivery() {
+    skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
+
+    for (int i = 0; i < skinnumber; i++) {
+        oapiReadItem_string(skinlist, SKINLIST[i], skinname);
+        strcpy(completedir, skindir);
+        strcat(completedir, skinname);
+        strcat(completedir, texname_fus);
+
+        skin[0] = oapiLoadTexture(completedir);
+        ApplyLivery();
+    }
+  
+    //oapiReadItem_string(skinlist, item, skinname);
+
+    //strcpy(completedir, skindir);
+    //strcat(completedir, skinname);
+    //strcat(completedir, texname_fus);
+
+    //skin[0] = oapiLoadTexture(completedir);
+
+    //skinlog = oapiOpenFile("skinlog.txt", FILE_OUT, ROOT);
+
+    //oapiWriteLine(skinlog, completedir);
+
+    //ApplyLivery();
+
+    //oapiCloseFile(fname, FILE_IN);
+
+}*/
+
+void B747SP::NextSkin() {
+    if (currentSkin >= 5) {
+        currentSkin = 0;
+    }
+
+    ChangeLivery();
+    currentSkin++;
+}
+
+void B747SP::ChangeLivery() {
+    const char item[5] = "SKIN";
+    char skinname[256];
+    char completedir_fus[256];
+    char completedir_vs[256];
+    char completedir_rw[256];
+    char completedir_eng[256];
+    char completedir_lw[256];
+    const char SKINLIST[][6] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5"};
+    
+    skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
+    oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
+
+
+    strcpy(completedir_fus, skindir);
+    strcat(completedir_fus, skinname);
+    strcat(completedir_fus, texname_fus);
+
+    strcpy(completedir_vs, skindir);
+    strcat(completedir_vs, skinname);
+    strcat(completedir_vs, texname_vs);
+
+    strcpy(completedir_rw, skindir);
+    strcat(completedir_rw, skinname);
+    strcat(completedir_rw, texname_rw);
+
+    strcpy(completedir_eng, skindir);
+    strcat(completedir_eng, skinname);
+    strcat(completedir_eng, texname_eng);
+
+    strcpy(completedir_lw, skindir);
+    strcat(completedir_lw, skinname);
+    strcat(completedir_lw, texname_lw);
+
+    skin[0] = oapiLoadTexture(completedir_fus);
+    skin[1] = oapiLoadTexture(completedir_vs);
+    skin[2] = oapiLoadTexture(completedir_rw);
+    skin[3] = oapiLoadTexture(completedir_eng);
+    skin[4] = oapiLoadTexture(completedir_lw);
+
+
+    ApplyLivery();
+}
+
+void B747SP::ApplyLivery(){
 
     if(!b747sp_dmesh) return;
 
@@ -482,14 +597,69 @@ void B747SP::ApplyLivery() {
 
     if(skin[4]) oapiSetTexture(b747sp_dmesh, 9, skin[4]);
 
-    //fuselage_tex = oapiLoadTexture(skinPath);
-    //oapiSetTexture(b747sp_dmesh, 1, fuselage_tex);
+}
+
+void B747SP::ParkingBrake(){
+
+    if(!parkingBrakeEnabled){
+        SetWheelbrakeLevel(1, 0, true);
+        parkingBrakeEnabled = true;
+    } else {
+        SetWheelbrakeLevel(0, 0, true);
+        parkingBrakeEnabled = false;
+    }
+
+}
+
+
+void B747SP::ActivateBeacons(){
+
+    for(int i = 0; i < 5; i++){
+		if(!beacon[i].active){
+				beacon[i].active = true;
+		} else {
+				beacon[i].active = false;
+		}
+	}
+}
+
+void B747SP::LightsControl(void){
+
+    if(!lights_on){
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        lights_on = true;
+    } else {
+        DelLightEmitter(l1);
+        DelLightEmitter(l2);
+        DelLightEmitter(l3);
+        DelLightEmitter(l4);
+        lights_on = false;
+    }
 }
 
 int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
     if(key == OAPI_KEY_G && down){
         SetGearDown();
+        return 1;
+    }
+    if(key == OAPI_KEY_NUMPADENTER && down){
+        ParkingBrake();
+        return 1;
+    }
+    if(key == OAPI_KEY_B && down){
+        ActivateBeacons();
+        return 1;
+    }
+    if(key == OAPI_KEY_F && down){
+        LightsControl();
+        return 1;
+    }
+    if(key == OAPI_KEY_V && down){
+        NextSkin();
         return 1;
     }
     return 0;
