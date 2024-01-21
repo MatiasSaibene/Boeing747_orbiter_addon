@@ -71,7 +71,7 @@ VESSEL4(hVessel, flightmodel){
 
 	landing_gear_status = GEAR_DOWN;
 
-    b747100_mesh = oapiLoadMesh("Boeing_747_100");
+    b747100_mesh = oapiLoadMesh("Boeing747\\Boeing_747_100");
 
 	DefineAnimations();
 }
@@ -508,7 +508,7 @@ double B747100::UpdateLvlEnginesContrail(){
     double machnumber = GetMachNumber();
     double altitude = GetAltitude();
 
-    if((machnumber > 0.5) && (altitude > 10000)){
+    if((machnumber > 0.5) && ((altitude > 10000) && (altitude < 15000))){
         return 1.0;
     } else {
         return 0.0;
