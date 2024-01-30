@@ -7,6 +7,7 @@
 #include "Orbitersdk.h"
 #include "VesselAPI.h"
 #include "747SPdefinitions.h"
+#include "747cockpitdefinitions.h"
 
 //Vessel parameters
 const double B747SP_SIZE = 25.0;  //Mean radius in meters.
@@ -117,12 +118,14 @@ class B747SP : public VESSEL4{
         void clbkPreStep(double, double, double) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
+        bool clbkLoadVC(int) override;
 
         void clbkVisualCreated(VISHANDLE vis, int refcount) override;
         void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
 
         VISHANDLE visual;
-        MESHHANDLE b747sp_mesh;  //Mesh handle
+        MESHHANDLE b747sp_mesh, mhcockpit_mesh;  //Mesh handle
+        unsigned int uimesh_Cockpit = 1;
         DEVMESHHANDLE b747sp_dmesh;  //Mesh template handle
         
 
@@ -149,11 +152,14 @@ class B747SP : public VESSEL4{
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         char skinpath[64];
-        LightEmitter *l1, *l2, *l3, *l4;
+        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2;
 
         COLOUR4 col_d = {0.9,0.8,1,0};
 	    COLOUR4 col_s = {1.9,0.8,1,0};
 	    COLOUR4 col_a = {0,0,0,0};
+        COLOUR4 ccol_d = {1, 0.508, 0.100};
+        COLOUR4 ccol_s = {1, 0.508, 0.100};
+        COLOUR4 ccol_a = {1, 0.508, 0.100};
 
         const char fname[43] = "skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[34] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT.

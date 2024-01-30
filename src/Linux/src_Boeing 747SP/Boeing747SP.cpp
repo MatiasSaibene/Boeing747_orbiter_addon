@@ -77,6 +77,8 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
 
     b747sp_mesh = NULL;
 
+    mhcockpit_mesh = NULL;
+
     skinpath[0] = '\0';
     for (int i = 0; i < 5; i++)
         skin[i] = 0;
@@ -390,6 +392,56 @@ void B747SP::DefineAnimations(void){
 
     AddAnimationComponent(anim_laileron, 0, 1, &LAileron);
     AddAnimationComponent(anim_raileron, 0, 1, &RAileron);
+
+
+    //Cockpit
+
+    static unsigned int LYokeColumnGrp[2] = {LYoke_column_Id, LYoke_Id};
+    static MGROUP_ROTATE LYokeColumn(
+        uimesh_Cockpit,
+        LYokeColumnGrp,
+        2,
+        (Axis_LYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    static unsigned int RYokeColumnGrp[2] = {RYoke_column_Id, RYoke_Id};
+    static MGROUP_ROTATE RYokeColumn(
+        uimesh_Cockpit,
+        RYokeColumnGrp,
+        2,
+        (Axis_RYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    AddAnimationComponent(anim_elevator, 0, 1, &LYokeColumn);
+    AddAnimationComponent(anim_elevator, 0, 1, &RYokeColumn);
+
+    static unsigned int LYokeGrp[1] = {LYoke_Id};
+    static MGROUP_ROTATE LYoke(
+        uimesh_Cockpit,
+        LYokeGrp,
+        1,
+        (LYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    static unsigned int RYokeGrp[1] = {RYoke_Id};
+    static MGROUP_ROTATE RYoke(
+        uimesh_Cockpit,
+        RYokeGrp,
+        1,
+        (RYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_laileron, 0, 1, &LYoke);
+    AddAnimationComponent(anim_laileron, 0, 1, &RYoke);
+
 }
 
 void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
@@ -453,6 +505,9 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
     SetMeshVisibilityMode (AddMesh (b747sp_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747SP")), MESHVIS_EXTERNAL);
     //AddMesh(b747sp_mesh);
 
+    //Add the mesh for the cockpit
+    SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
+
     //Define beacons
 
     static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
@@ -489,46 +544,6 @@ void B747SP::clbkVisualDestroyed(VISHANDLE vis, int refcount){
     b747sp_dmesh = NULL;
 
 }
-/*
-void B747SP::ChangeLivery() {
-    const int skinnumber = 5;
-    const char item[5] = "SKIN";
-    char skinname[256];
-    const char fname[43] = "skins.txt";
-    const char skindir[34] = "Boeing_747\\B747SP\\Skins\\";
-    const char texname_fus[14] = "\\Fuselage.dds";
-    char completedir[256];
-    const char SKINLIST[][6] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5"};
-
-    skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
-
-    for (int i = 0; i < skinnumber; i++) {
-        oapiReadItem_string(skinlist, SKINLIST[i], skinname);
-        strcpy(completedir, skindir);
-        strcat(completedir, skinname);
-        strcat(completedir, texname_fus);
-
-        skin[0] = oapiLoadTexture(completedir);
-        ApplyLivery();
-    }
-  
-    //oapiReadItem_string(skinlist, item, skinname);
-
-    //strcpy(completedir, skindir);
-    //strcat(completedir, skinname);
-    //strcat(completedir, texname_fus);
-
-    //skin[0] = oapiLoadTexture(completedir);
-
-    //skinlog = oapiOpenFile("skinlog.txt", FILE_OUT, ROOT);
-
-    //oapiWriteLine(skinlog, completedir);
-
-    //ApplyLivery();
-
-    //oapiCloseFile(fname, FILE_IN);
-
-}*/
 
 void B747SP::NextSkin() {
     if (currentSkin >= 5) {
@@ -630,14 +645,31 @@ void B747SP::LightsControl(void){
         l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
         l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
         l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        cpl1 = AddPointLight((PL1_Location), 1, 0.1, 0, 0.1, ccol_d, ccol_s, ccol_a);
+        cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        cpl2 = AddPointLight((PL2_Location), 1, 0.1, 0, 0.1, ccol_d, ccol_s, ccol_a);
+        cpl2->SetVisibility(LightEmitter::VIS_COCKPIT);
         lights_on = true;
     } else {
         DelLightEmitter(l1);
         DelLightEmitter(l2);
         DelLightEmitter(l3);
         DelLightEmitter(l4);
+        DelLightEmitter(cpl1);
+        DelLightEmitter(cpl2);
         lights_on = false;
     }
+}
+
+bool B747SP::clbkLoadVC(int id){
+
+    switch(id){
+        case 0 : SetCameraOffset((Camera_Location));
+        SetCameraDefaultDirection(_V(0, 0, 1));
+        SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+        break;
+    }
+    return true;
 }
 
 int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
