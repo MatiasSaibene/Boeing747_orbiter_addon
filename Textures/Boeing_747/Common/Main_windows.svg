@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="Main_windows.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.47501923"
+     inkscape:cx="513.66342"
+     inkscape:cy="512.61083"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <desc
+     id="desc1">Boeing_747_cockpit.blend, (Blender 3.3.9)</desc>
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="899.331,209.657 668.375,145.026 675.132,436.549 899.331,490.891 "
+     id="polygon1"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="396.522,264.695 396.522,29.845 124.670,101.152 125.480,152.772 201.108,264.837 372.170,490.891 "
+     id="polygon2"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="538.796,544.833 396.522,490.891 451.281,751.138 485.165,949.664 793.044,1024.000 793.044,633.986 "
+     id="polygon3"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="1024.000,772.125 1024.000,490.891 799.801,545.233 793.044,836.756 "
+     id="polygon4"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="668.375,256.041 644.022,29.844 472.960,255.898 397.333,367.964 396.522,419.583 668.375,490.891 "
+     id="polygon5"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(0, 0, 0)"
+     fill-opacity="1"
+     points="142.273,970.058 396.522,880.905 396.522,490.891 88.643,565.227 54.759,763.753 0.000,1024.000 "
+     id="polygon6"
+     style="fill:#afdde9;opacity:1;stroke:none" />
+</svg>

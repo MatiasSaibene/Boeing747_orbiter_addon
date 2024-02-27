@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg32"
+   sodipodi:docname="gear_lever.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs32">
+    <linearGradient
+       id="linearGradient32"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#737373;stop-opacity:1;"
+         offset="0"
+         id="stop32" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.69999999"
+         id="stop34" />
+      <stop
+         style="stop-color:#999999;stop-opacity:1;"
+         offset="1"
+         id="stop33" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient32"
+       id="radialGradient33"
+       cx="718.14746"
+       cy="305.18164"
+       fx="718.14746"
+       fy="305.18164"
+       r="239.99512"
+       gradientTransform="matrix(1,0,0,0.9972859,0,0.82829317)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient32"
+       id="radialGradient36"
+       cx="717.79297"
+       cy="784.2627"
+       fx="717.79297"
+       fy="784.2627"
+       r="239.64062"
+       gradientTransform="matrix(1,0,0,1.0004034,0,-0.31640093)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview32"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.32656862"
+     inkscape:cx="214.35005"
+     inkscape:cy="439.4176"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg32" />
+  <desc
+     id="desc1">Boeing_747_cockpit.blend, (Blender 3.3.9)</desc>
+  <rect
+     style="fill:#3f2014;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square"
+     id="rect1"
+     width="1024"
+     height="1024"
+     x="0"
+     y="0" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="208.576,817.872 186.872,736.762 0.000,517.441 0.000,1004.304 "
+     id="polygon1"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="241.244,517.441 241.244,276.197 0.000,276.197 0.000,517.441 "
+     id="polygon2"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="478.152,1024.000 478.152,537.137 269.576,723.570 291.280,804.679 "
+     id="polygon3"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="241.244,34.953 0.000,34.953 0.000,276.197 241.244,276.197 "
+     id="polygon4"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="0.000,1004.304 478.152,1024.000 291.280,804.679 208.576,817.872 "
+     id="polygon5"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(63, 32, 20)"
+     fill-opacity="1"
+     points="478.152,537.137 0.000,517.441 186.872,736.762 269.576,723.570 "
+     id="polygon6"
+     style="stroke:none" />
+  <path
+     id="polygon7"
+     style="fill:url(#radialGradient36);stroke:none"
+     d="M 653.00977 544.52539 L 481.4043 687.92188 L 478.15234 881.38672 L 520 970.54883 L 529.7168 980.45508 L 618.48242 1024 L 812.42578 1022.7695 L 957.43359 852.44141 L 957.43359 677.08398 L 919.08008 595.35156 L 910.08594 586.17383 L 828.69727 546.28516 L 653.00977 544.52539 z M 790.48242 709.0293 L 793.60352 712.64453 L 781.85547 732.7793 L 751.31055 767.68945 L 712.27539 805.49609 L 678.57617 835.9043 L 658.24023 848.15625 L 655.0625 844.49023 L 666.98242 824.32422 L 697.36328 790.25586 L 735.72266 751.53906 L 770.19727 721.16016 L 790.48242 709.0293 z " />
+  <path
+     id="polygon8"
+     style="fill:url(#radialGradient33);stroke:none"
+     d="M 653.38281 65.837891 L 481.69727 208.82422 L 478.15234 402.64453 L 520.79297 491.97461 L 530.60156 501.77734 L 619.21289 544.52539 L 812.73438 543.55078 L 958.14258 373.41797 L 958.14258 197.54297 L 919.00586 115.60938 L 909.91406 106.52539 L 828.60938 67.40625 L 653.38281 65.837891 z M 791.38281 230.88672 L 794.9082 234.15234 L 782.33203 254.24023 L 751.9375 288.75195 L 712.75781 326.41211 L 678.30859 356.35938 L 657.91797 367.99805 L 654.34961 364.68555 L 666.91406 344.60156 L 697.73438 311.29688 L 736.25781 272.75391 L 771.00781 242.24609 L 791.38281 230.88672 z " />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(51, 51, 51)"
+     fill-opacity="1"
+     points="221.596,34.953 302.706,30.271 349.535,22.160 349.535,12.794 302.706,4.683 221.597,0.000 127.939,0.000 46.829,4.683 0.000,12.794 0.000,22.160 46.829,30.271 127.939,34.953 "
+     id="polygon27"
+     style="fill:#999999;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(51, 51, 51)"
+     fill-opacity="1"
+     points="780.858,35.567 699.748,30.884 606.090,30.884 524.980,35.567 478.152,43.678 478.152,53.044 524.981,61.155 606.090,65.838 699.748,65.838 780.858,61.155 827.687,53.044 827.687,43.678 "
+     id="polygon32"
+     style="fill:#999999;stroke:none" />
+</svg>
