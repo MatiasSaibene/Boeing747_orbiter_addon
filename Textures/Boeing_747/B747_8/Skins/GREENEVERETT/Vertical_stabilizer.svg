@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg40"
+   sodipodi:docname="Vertical_stabilizer.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs40" />
+  <sodipodi:namedview
+     id="namedview40"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.24072266"
+     inkscape:cx="1055.1562"
+     inkscape:cy="326.10142"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg40" />
+  <desc
+     id="desc1">Boeing_747SP.blend, (Blender 3.3.9)</desc>
+  <rect
+     style="fill:#ffffff;fill-opacity:1;stroke-width:15;stroke-linecap:square"
+     id="rect1"
+     width="1024"
+     height="1024"
+     x="0"
+     y="0"
+     rx="2.3779886"
+     ry="2.3779886" />
+  <path
+     id="polygon1"
+     d="m 139.64648,505.07227 34.91016,90.39648 18.95117,-2.29687 42.71289,-5.17579 211.88086,354.02735 8.2168,15.04101 -43.29102,48.06255 69.41602,-0.2461 125.81445,-0.4454 251.62891,-0.8906 29.58594,-0.4179 -59.19532,-61.10356 -532.76953,-421.58008 -78.93164,-7.68359 z"
+     style="fill:#ffffff;fill-opacity:1"
+     sodipodi:nodetypes="ccccccccccccccc" />
+  <path
+     d="m 178.04688,36.59375 34.91015,90.39453 18.94922,-2.29687 42.71289,-5.17383 211.88281,354.02734 8.2168,15.04102 -43.00781,47.74609 -1.07422,0.004 -40.96875,0.14453 -40.96875,0.14648 13.16406,0.10938 13.16602,0.11133 56.71875,-0.20118 69.0957,-0.24609 125.8125,-0.44531 251.62891,-0.89063 29.58789,-0.41797 L 868.67773,473.54492 335.9082,51.964844 256.97656,44.279297 Z m 416.51757,436.95117 51.83203,62.09766 z"
+     style="fill:#ffffff;fill-opacity:1"
+     id="path1" />
+  <path
+     style="fill:#37c871;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 178.04688,36.59375 335.9082,51.964844 868.67773,473.54492 927.87305,534.64657 381.86328,536.73642 212.95703,126.98828 Z"
+     id="path2" />
+  <path
+     style="fill:#37c871;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 178.04688,36.59375 335.9082,51.964844 868.67773,473.54492 927.87305,534.64657 381.86328,536.73642 212.95703,126.98828 Z"
+     id="path3" />
+  <path
+     style="fill:#37c871;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 139.64648,505.0283 157.86133,15.37109 532.76952,421.58008 59.19533,61.10163 -546.00978,2.0899 -168.90625,-409.74817 z"
+     id="path4" />
+</svg>

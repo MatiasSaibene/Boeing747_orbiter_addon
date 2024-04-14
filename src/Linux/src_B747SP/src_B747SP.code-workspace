@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../../../orbiter_test/Orbiter/orbiter/Addons/XRVessels/XRVessels/DeltaGliderXR1"
+		},
+		{
+			"path": "../../HR1/src"
+		}
+	],
+	"settings": {}
+}

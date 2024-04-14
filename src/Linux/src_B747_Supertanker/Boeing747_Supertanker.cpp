@@ -13,7 +13,6 @@
 #include "Boeing747_Supertanker.h"
 #include <cstring>
 #include <cstdio>
-#include <cstdint>
 #include <algorithm>
 
 bool parkingBrakeEnabled;
@@ -75,7 +74,9 @@ VESSEL4(hVessel, flightmodel){
 
 	landing_gear_status = GEAR_DOWN;
 
-    B747ST_mesh = oapiLoadMesh("Boeing747\\Boeing_747_Supertanker");
+    B747ST_mesh = NULL;
+
+    mhcockpit_mesh = NULL;
 
 	DefineAnimations();
 }
@@ -382,6 +383,66 @@ void B747ST::DefineAnimations(void){
 
     AddAnimationComponent(anim_laileron, 0, 1, &LAileron);
     AddAnimationComponent(anim_raileron, 0, 1, &RAileron);
+
+        //Cockpit animations
+
+    static unsigned int LYokeColumnGrp[2] = {LYoke_column_Id, LYoke_Id};
+    static MGROUP_ROTATE LYokeColumn(
+        uimesh_Cockpit,
+        LYokeColumnGrp,
+        2,
+        (Axis_LYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    static unsigned int RYokeColumnGrp[2] = {RYoke_column_Id, RYoke_Id};
+    static MGROUP_ROTATE RYokeColumn(
+        uimesh_Cockpit,
+        RYokeColumnGrp,
+        2,
+        (Axis_RYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    AddAnimationComponent(anim_elevator, 0, 1, &LYokeColumn);
+    AddAnimationComponent(anim_elevator, 0, 1, &RYokeColumn);
+
+    static unsigned int LYokeGrp[1] = {LYoke_Id};
+    static MGROUP_ROTATE LYoke(
+        uimesh_Cockpit,
+        LYokeGrp,
+        1,
+        (LYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    static unsigned int RYokeGrp[1] = {RYoke_Id};
+    static MGROUP_ROTATE RYoke(
+        uimesh_Cockpit,
+        RYokeGrp,
+        1,
+        (RYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_laileron, 0, 1, &LYoke);
+    AddAnimationComponent(anim_laileron, 0, 1, &RYoke);
+
+    static unsigned int GearLeverGrp[1] = {Landing_gear_lever_Id};
+    static MGROUP_ROTATE GearLever(
+        uimesh_Cockpit,
+        GearLeverGrp,
+        1,
+        (Axis_landing_gear_lever_Location),
+        _V(1, 0, 0),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_landing_gear, 0, 0.1, &GearLever);
 }
 
 // Overloaded callback functions
@@ -478,7 +539,10 @@ void B747ST::clbkSetClassCaps(FILEHANDLE cfg){
 	}
 
     //Add the mesh
-    AddMesh(B747ST_mesh);
+    SetMeshVisibilityMode (AddMesh (B747ST_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747_Supertanker")), MESHVIS_EXTERNAL);
+
+    //Add the mesh for the cockpit
+    SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
 
 }
 
@@ -489,14 +553,53 @@ void B747ST::LightsControl(void){
         l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
         l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
         l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+
+        cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        cpl2 = AddPointLight((PL2_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl2->SetVisibility(LightEmitter::VIS_COCKPIT);
+
         lights_on = true;
     } else {
         DelLightEmitter(l1);
         DelLightEmitter(l2);
         DelLightEmitter(l3);
         DelLightEmitter(l4);
+
+        DelLightEmitter(cpl1);
+        DelLightEmitter(cpl2);
+
         lights_on = false;
     }
+}
+
+bool B747ST::clbkLoadVC(int id){
+
+    switch(id){
+        case 0 : //Commander
+            SetCameraOffset(Captains_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 1, -1, 2);
+        break;
+
+        case 1 : //First officer
+            SetCameraOffset(First_officer_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(0, -1, -1, 2);
+        break;
+
+        case 2: //Engineer
+            SetCameraOffset(Engineer_camera_Location);
+            SetCameraDefaultDirection(_V(1, 0, 0));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(1, -1, -1, 3);
+        break;
+    }
+
+    return true; 
+
 }
 
 void B747ST::DischargeWater(){

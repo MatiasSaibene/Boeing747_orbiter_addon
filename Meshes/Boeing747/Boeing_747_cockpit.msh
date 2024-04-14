@@ -35887,15 +35887,15 @@ MATERIAL Upper_panel_mat
 1.000 1.000 1.000 1.000 10.000
 0.000 0.000 0.000 0.000
 TEXTURES 12
-Autopilot_panel.dds
-fabric.dds
-Central_pedestal.dds
-MFDtex.dds
-Cockpit_fuselage.dds
-Engineer_panel.dds
-brown.dds
-gear_lever.dds
-MFD_BTN.dds D
-Main_windows.dds
-Panel.dds
-Upper_panel.dds
+Boeing_747\Common\Autopilot_panel.dds
+Boeing_747\Common\fabric.dds
+Boeing_747\Common\Central_pedestal.dds
+Boeing_747\Common\MFDtex.dds
+Boeing_747\Common\Cockpit_fuselage.dds
+Boeing_747\Common\Engineer_panel.dds
+Boeing_747\Common\brown.dds
+Boeing_747\Common\gear_lever.dds
+Boeing_747\Common\MFD_BTN.dds D
+Boeing_747\Common\Main_windows.dds
+Boeing_747\Common\Panel.dds
+Boeing_747\Common\Upper_panel.dds

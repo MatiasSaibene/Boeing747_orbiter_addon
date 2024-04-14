@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../../../orbiter_test/Orbiter/orbiter/Src/Vessel/Atlantis"
+		},
+		{
+			"path": "../../HR1/src"
+		},
+		{
+			"path": "../src_B747SP/src_with_SKIN_support"
+		}
+	],
+	"settings": {}
+}

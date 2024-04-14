@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg40"
+   sodipodi:docname="Vertical_stabilizer.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs40" /><sodipodi:namedview
+     id="namedview40"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.32054899"
+     inkscape:cx="935.89438"
+     inkscape:cy="463.26772"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg40" /><desc
+     id="desc1">Boeing_747SP.blend, (Blender 3.3.9)</desc><rect
+     style="fill:#ffffff;fill-opacity:1;stroke-width:15;stroke-linecap:square"
+     id="rect1"
+     width="1024"
+     height="1024"
+     x="0"
+     y="0"
+     rx="2.3779886"
+     ry="2.3779886" /><path
+     d="m 187.00781,93.074219 32.76195,84.831951 17.78318,-2.15553 40.08455,-4.85545 198.84458,332.24167 7.71118,14.11545 -40.36132,44.80795 -1.00812,0.004 -38.44773,0.13563 -38.44774,0.13747 12.35401,0.10265 12.35585,0.10448 53.22856,-0.1888 64.84389,-0.23095 118.07061,-0.41791 236.14491,-0.83582 27.76719,-0.39225 -55.55273,-57.34166 -499.98551,-395.63744 -74.07457,-7.21259 z m 390.88713,410.062641 48.64254,58.27638 z"
+     style="fill:#318398;fill-opacity:1;stroke-width:0.938464"
+     id="path1" /><path
+     style="fill:#318398;fill-opacity:1;stroke:none;stroke-width:0.938464px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 219.76976,177.90617 57.86773,-7.01098 206.55576,346.35712 -40.36132,44.80795 -77.90359,0.27686 z"
+     id="path2-9" /><g
+     id="g52"
+     transform="matrix(2.2122387,0,0,2.212235,-2142.961,-755.46267)"><circle
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:round;stroke-dasharray:none"
+       id="path51"
+       cx="1175.515"
+       cy="507.21503"
+       r="45.22419" /><path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1132.3329,520.65119 h 86.3643 l -43.1822,-58.66035 v 45.22419 h -45.2242 z"
+       id="path52" /></g><path
+     id="polygon1"
+     d="m 195.54492,587.02734 30.49382,79.00599 16.55374,-2.00745 37.30946,-4.52361 185.07668,309.41782 7.17732,13.14576 -37.81445,42.00635 60.63449,-0.2151 109.89818,-0.3893 219.79637,-0.7783 25.84314,-0.3653 -51.70676,-53.40411 -465.37105,-368.45851 -68.94632,-6.71541 z"
+     style="fill:#318398;fill-opacity:1;stroke-width:0.873744"
+     sodipodi:nodetypes="ccccccccccccccc" /><style
+     type="text/css"
+     id="style1">
+	.st0{fill:#007AC2;}
+</style><path
+     style="fill:#318398;fill-opacity:1;stroke:none;stroke-width:0.873744px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 226.04045,666.03162 53.86149,-6.52935 192.25571,322.56358 -37.56707,41.72975 -72.51025,0.2578 z"
+     id="path50" /><style
+     type="text/css"
+     id="style1-0">
+	.st0{fill:#007AC2;}
+</style><style
+     type="text/css"
+     id="style1-4">
+	.st0{fill:#007AC2;}
+</style><g
+     id="g53"
+     transform="matrix(2.0590834,0,0,2.0602621,-1948.9277,-179.60262)"><circle
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:round;stroke-dasharray:none"
+       id="circle52"
+       cx="1175.515"
+       cy="507.21503"
+       r="45.22419" /><path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1132.3329,520.65119 h 86.3643 l -43.1822,-58.66035 v 45.22419 h -45.2242 z"
+       id="path53" /></g></svg>

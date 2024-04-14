@@ -11,21 +11,7 @@
 #include "747SPdefinitions.h"
 #include "747cockpitdefinitions.h"
 #include "747FCdefinitions.h"
-
-//Macros defines
-#define TEX_MFDKEYS 9
-// DVC stuff...
-#define MFDS_FONT (drawRes.mfdLabelsFont)
-
-#define PEN_GREEN  (drawRes.spSet[0])
-#define PEN_CYAN   (drawRes.spSet[1])
-#define PEN_RED    (drawRes.spSet[2])
-#define PEN_AMBER  (drawRes.spSet[3])
-#define PEN_WHITE  (drawRes.spSet[4])
-#define PEN_DARK   (drawRes.spSet[5])
-#define VC_CTRLSET_MFDK 101
-#define VC_CTRLSET_MFDC 102
-#define VC_AREA_MFDKEYS 103
+#include "XRSound.h"
 
 //Vessel parameters
 const double B747SP_SIZE = 25.0;  //Mean radius in meters.
@@ -38,9 +24,11 @@ const double B747SP_ISP = 2e4; //Fuel-specific impulse in m/s.
 
 const double B747SP_MAXMAINTH = 500e3; //Max main thrust in kN.
 
+//const double B747SP_MAXRCSTH = 58.0e3;
+
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
-const double ENGINE_ROTATION_SPEED = 10;
+const double ENGINE_ROTATION_SPEED = 25;
 
 const VECTOR3 B747SP_CS = {401.28, 868.57, 134.25};
 
@@ -124,12 +112,16 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
     {(TDP14_Location), 5e6, 5e6, 3.0},
 };
 
-//B747100 class interface
 
+
+//B747SP class interface
 
 class B747SP : public VESSEL4{
 
     public:
+
+        enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
+
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
 
         B747SP(OBJHANDLE hVessel, int flightmodel);
@@ -152,10 +144,15 @@ class B747SP : public VESSEL4{
 
         void LightsControl(void);
 
+        void EnginesAutostart(void);
+        void EnginesAutostop(void);
+        void UpdateEnginesStatus(void);
+
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
+        void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
@@ -170,6 +167,8 @@ class B747SP : public VESSEL4{
         MESHHANDLE b747sp_mesh, mhcockpit_mesh, fccabin_mesh;  //Mesh handle
         unsigned int uimesh_Cockpit = 1;
         DEVMESHHANDLE b747sp_dmesh;  //Mesh template handle
+
+        XRSound *m_pXRSound;
         
 
     private:
@@ -186,6 +185,7 @@ class B747SP : public VESSEL4{
         double lvlcontrailengines;
         double landing_gear_proc;
         double engines_proc;
+        double pwr;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
@@ -195,7 +195,7 @@ class B747SP : public VESSEL4{
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         SURFHANDLE vcMfdTex;
-        char skinpath[64];
+        char skinpath[256];
         LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
         
 
@@ -209,25 +209,15 @@ class B747SP : public VESSEL4{
         COLOUR4 fccol_s = {1, 1, 1};
         COLOUR4 fccol_a = {1, 1, 1};
 
-        const char fname[43] = "skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
-        const char skindir[34] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT.
+        const char fname[17] = "B747SP_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
+        const char skindir[25] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";
         const char texname_vs[25] = "\\Vertical_stabilizer.dds";
-        const char texname_rw[15] = "Right_wing.dds";
-        const char texname_eng[9] = "ENG1.dds";
-        const char texname_lw[14] = "Left_wing.dds";
-
-        /* struct DrawRes
-        {
-            bool def;
-
-            oapi::Font* mfdLabelsFont;
-
-            oapi::Brush* brSet[8];
-            oapi::Pen* spSet[8];
-        } static drawRes; */
+        const char texname_rw[16] = "\\Right_wing.dds";
+        const char texname_lw[15] = "\\Left_wing.dds";
+        const char texname_eng[10] = "\\ENG1.dds";
 
 };
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __B747ST_H
 #define __B747ST_H
 
@@ -7,6 +9,7 @@
 #include "Orbitersdk.h"
 #include "VesselAPI.h"
 #include "747STdefinitions.h"
+#include "747cockpitdefinitions.h"
 
 //Vessel parameters
 const double B747ST_SIZE = 22.8; //Mean radius in meters.
@@ -50,6 +53,8 @@ const double B747ST_STAB_C = 3.59; //Stabilizer chord lenght in meters.
 const double B747ST_STAB_S = 39.0753; //Stabilizer wing area in m^2.
 
 const double B747ST_STAB_A = 2; //Stabilizer wing aspect ratio.
+
+const VECTOR3 B747ST_COCKPIT_OFFSET = Cockpit_windows_Location;
 
 //Define touchdown points
 //For gear down
@@ -118,6 +123,8 @@ class B747ST : public VESSEL4{
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
+        bool clbkLoadVC(int) override;
+
     private:
 
         unsigned int anim_landing_gear;
@@ -137,13 +144,17 @@ class B747ST : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4], wdisch[2];
         THGROUP_HANDLE thg_main, thg_retro, wdisch_main;
-        MESHHANDLE B747ST_mesh;
+        MESHHANDLE B747ST_mesh, mhcockpit_mesh;
+        unsigned int uimesh_Cockpit = 1;
         BEACONLIGHTSPEC beacon[5];
-        LightEmitter *l1, *l2, *l3, *l4;
+        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2;
 
         COLOUR4 col_d = {0.9,0.8,1,0};
 	    COLOUR4 col_s = {1.9,0.8,1,0};
 	    COLOUR4 col_a = {0,0,0,0};
+        COLOUR4 ccol_d = {1, 0.508, 0.100};
+        COLOUR4 ccol_s = {1, 0.508, 0.100};
+        COLOUR4 ccol_a = {1, 0.508, 0.100};
 };
 
 #endif //!__B747ST_H

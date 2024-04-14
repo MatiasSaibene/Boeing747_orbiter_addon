@@ -15,11 +15,11 @@
 #include <cstdio>
 #include <algorithm>
 
-//B747SP::DrawRes B747SP::drawRes;
-
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
+bool engines_on = false;
+
 
 // 1. vertical lift component
 
@@ -90,14 +90,7 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
 
 //Destructor
 B747SP::~B747SP(){
-    /*oapiDeleteMesh(b747sp_mesh);
 
-    for(int i = 0; i < 5; i++)
-        if(skin[i]) oapiReleaseTexture(skin[i]);
-
-    for(int i = 0; i < 5; i++)
-        if(skin[i]) oapiDestroySurface(skin[i]);
-*/
 }
 
 void B747SP::DefineAnimations(void){
@@ -470,17 +463,93 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
 
     PROPELLANT_HANDLE JET_A1 = CreatePropellantResource(B747SP_FUELMASS);
 
+    
 	th_main[0] = CreateThruster((ENG1_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[1] = CreateThruster((ENG2_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[2] = CreateThruster((ENG3_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
     th_main[3] = CreateThruster((ENG4_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
-    thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
 
     th_retro[0] = CreateThruster((ENG1_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
     th_retro[1] = CreateThruster((ENG2_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
-    thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
+    THRUSTER_HANDLE th_rcs[24], th_group[4];
+        
+        //RCS1
+    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
+
+    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
+
+
+        //RCS2
+    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
+
+    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
+
+
+        //RCS3
+    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
+
+    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
+
+
+        //RCS4
+    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
+
+    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
+    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
+
+    //Define RCS groups
+    th_group[0] = th_rcs[3];
+    th_group[1] = th_rcs[9];
+    th_group[2] = th_rcs[15];
+    th_group[3] = th_rcs[21];
+    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
+
+    th_group[0] = th_rcs[0];
+	th_group[1] = th_rcs[6];
+	th_group[2] = th_rcs[12];
+	th_group[3] = th_rcs[18];
+	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
+
+	th_group[0] = th_rcs[10];
+	th_group[1] = th_rcs[22];
+	th_group[2] = th_rcs[1];
+	th_group[3] = th_rcs[13];
+	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
+
+	th_group[0] = th_rcs[4];
+	th_group[1] = th_rcs[16];
+    th_group[2] = th_rcs[7];
+	th_group[3] = th_rcs[19];
+	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
+
+	th_group[0] = th_rcs[6];
+	th_group[1] = th_rcs[15];
+	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
+
+	th_group[0] = th_rcs[3];
+	th_group[1] = th_rcs[18];
+	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
+ */
 
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
@@ -553,6 +622,7 @@ void B747SP::clbkVisualCreated(VISHANDLE vis, int refcount){
 
     ApplyLivery();
 
+
 }
 
 void B747SP::clbkVisualDestroyed(VISHANDLE vis, int refcount){
@@ -563,7 +633,7 @@ void B747SP::clbkVisualDestroyed(VISHANDLE vis, int refcount){
 }
 
 void B747SP::NextSkin() {
-    if (currentSkin >= 5) {
+    if (currentSkin >= 15) {
         currentSkin = 0;
     }
 
@@ -579,11 +649,11 @@ void B747SP::ChangeLivery() {
     char completedir_rw[256];
     char completedir_eng[256];
     char completedir_lw[256];
-    const char SKINLIST[][6] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5"};
+    const char SKINLIST[][15] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};
     
     skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
     oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
-
+    
 
     strcpy(completedir_fus, skindir);
     strcat(completedir_fus, skinname);
@@ -608,8 +678,8 @@ void B747SP::ChangeLivery() {
     skin[0] = oapiLoadTexture(completedir_fus);
     skin[1] = oapiLoadTexture(completedir_vs);
     skin[2] = oapiLoadTexture(completedir_rw);
-    skin[3] = oapiLoadTexture(completedir_eng);
-    skin[4] = oapiLoadTexture(completedir_lw);
+    skin[3] = oapiLoadTexture(completedir_lw);
+    skin[4] = oapiLoadTexture(completedir_eng);
 
 
     ApplyLivery();
@@ -625,9 +695,9 @@ void B747SP::ApplyLivery(){
 
     if(skin[2]) oapiSetTexture(b747sp_dmesh, 3, skin[2]);
 
-    if(skin[3]) oapiSetTexture(b747sp_dmesh, 4, skin[3]);
+    if(skin[3]) oapiSetTexture(b747sp_dmesh, 8, skin[3]);
 
-    if(skin[4]) oapiSetTexture(b747sp_dmesh, 9, skin[4]);
+    if(skin[4]) oapiSetTexture(b747sp_dmesh, 10, skin[4]);
 
 }
 
@@ -720,6 +790,36 @@ void B747SP::LightsControl(void){
     }
 }
 
+void B747SP::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747SP::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747SP::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
 bool B747SP::clbkLoadVC(int id){
 
     switch(id){
@@ -742,6 +842,7 @@ bool B747SP::clbkLoadVC(int id){
             SetCameraDefaultDirection(_V(1, 0, 0));
             SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
             oapiVCSetNeighbours(1, -1, -1, 3);
+            m_pXRSound->StopWav(cabin_ambiance);
         break;
 
         case 3: //First class cabin
@@ -749,6 +850,7 @@ bool B747SP::clbkLoadVC(int id){
             SetCameraDefaultDirection(_V(0, 0, 1));
             SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
             oapiVCSetNeighbours(8, -1, 2, 4);
+            m_pXRSound->PlayWav(cabin_ambiance);
         break;
 
         case 4:
@@ -892,6 +994,19 @@ int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
         NextSkin();
         return 1;
     }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
+    }
     return 0;
 }
 
@@ -946,6 +1061,7 @@ void B747SP::SetGearDown(void){
 }
 
 void B747SP::ActivateLandingGear(LandingGearStatus action){
+    m_pXRSound->PlayWav(gear_movement);
     landing_gear_status = action;
 }
 
@@ -977,15 +1093,36 @@ double B747SP::UpdateLvlEnginesContrail(){
 
 }
 
+
+
 void B747SP::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+    UpdateEnginesStatus();
+}
+
+void B747SP::clbkPostCreation(){
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
 }
 
 void B747SP::clbkPreStep(double simt, double simdt, double mjd){
 
     double grndspd = GetGroundspeed();
-    double pwr = GetThrusterLevel(th_main);
+    
     double prp = GetAnimation(anim_engines);
     double msimdt = simdt * ENGINE_ROTATION_SPEED;
     double da = msimdt * 0.1 + (pwr * 0.1);
