@@ -6,7 +6,7 @@ This project attempts to recreate the Boeing 747 as best as possible (or as best
 
 ## Features
 
- - Includes Boeing 747SP, 747-100, 747-400, 747-800, and 747-LCF
+ - Includes Boeing 747SP, 747-100, 747-400, 747-800, 747 Shuttle Carrier Aircraft, 747 Stratospheric Observatory For Infrared Astronomy (SOFIA), 747 Airborne Aircraft Carrier, and 747-LCF
    DreamLifter models.
  - Virtual cockpit with animations.
  - Static (via scenario file) or dynamic (in sim) livery change.
