@@ -185,6 +185,7 @@ class B747400 : public VESSEL4{
 
         const char fname[18] = "B747400_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[27] = "Boeing_747\\B747_400\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+        char skinname[256];
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747SP
+//          ORBITER MODULE: Boeing 747-SOFIA
 //
-//Boeing747SP.cpp
-//Control module for Boeing 747SP vessel class
+//Boeing747SOFIA.cpp
+//Control module for Boeing 747-SOFIA vessel class
 //
 //==========================================
 
@@ -17,6 +17,7 @@
 
 bool parkingBrakeEnabled;
 bool lights_on;
+bool engines_on;
 
 // 1. vertical lift component
 
@@ -81,10 +82,13 @@ B747SOFIA::B747SOFIA(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flig
 
     mhcockpit_mesh = NULL;
 
+    engines_on = false;
+
 }
 
 //Destructor
 B747SOFIA::~B747SOFIA(){
+
 }
 
 void B747SOFIA::DefineAnimations(void){
@@ -595,6 +599,36 @@ void B747SOFIA::LightsControl(void){
     }
 }
 
+void B747SOFIA::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747SOFIA::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747SOFIA::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
 bool B747SOFIA::clbkLoadVC(int id){
 
     switch(id){
@@ -646,6 +680,19 @@ int B747SOFIA::clbkConsumeBufferedKey(int key, bool down, char *kstate){
     if(key == OAPI_KEY_D && down){
         OpenTelescopeHatch();
         return 1;
+    }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
     }
     return 0;
 }
@@ -748,6 +795,25 @@ void B747SOFIA::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
     UpdateTelescopeHatchAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+    UpdateEnginesStatus();
+}
+
+void B747SOFIA::clbkPostCreation(){
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
 }
 
 void B747SOFIA::clbkPreStep(double simt, double simdt, double mjd){

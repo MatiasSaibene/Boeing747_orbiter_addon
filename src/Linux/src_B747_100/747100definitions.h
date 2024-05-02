@@ -1,12 +1,11 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Mon Mar 18 21:44:21 2024
+// Date: Mon Apr 29 12:54:09 2024
 
 
 #include "Orbitersdk.h"
 
 #ifndef __747100definitions_H
 #define __747100definitions_H
-
 
     const UINT Fuselage_Id = 0;
     const UINT Vertical_stabilizer_Id = 1;
@@ -84,6 +83,7 @@
     constexpr VECTOR3 ENG2_blades_Location =     {-11.5142, 1.9405, 3.8744};
     constexpr VECTOR3 ENG3_Location =     {11.2530, 1.9263, 2.8942};
     constexpr VECTOR3 ENG3_blades_Location =     {11.2558, 1.9405, 3.8744};
+    constexpr VECTOR3 Cockpit_offset_Location =     {0.0382, 8.4046, 24.3853};
     constexpr VECTOR3 TDP1_Location =     {0.0229, 0.0052, 22.0571};
     constexpr VECTOR3 TDP2_Location =     {-5.3282, 0.0052, -16.2437};
     constexpr VECTOR3 TDP3_Location =     {5.3410, 0.0052, -16.2440};
@@ -116,6 +116,15 @@
     constexpr VECTOR3 Axis_left_landing_gear_door2_Location =     {-1.9882, 1.9285, -1.9377};
     constexpr VECTOR3 Axis_right_landing_gear_door2_Location =     {1.9816, 1.9285, -1.9377};
     constexpr VECTOR3 Axis_landing_gear_right_door_1_Location =     {0.5832, 1.8746, -1.9931};
+    constexpr VECTOR3 LIGHT2_Location =     {-4.0002, 3.5567, 8.7066};
+    constexpr VECTOR3 LIGHT1_Location =     {-5.0002, 3.5567, 7.8303};
+    constexpr VECTOR3 LIGHT3_Location =     {4.0000, 3.5567, 8.7066};
+    constexpr VECTOR3 LIGHT4_Location =     {4.9998, 3.5567, 7.8303};
+    constexpr VECTOR3 Beacon2_right_wing_Location =     {28.6913, 5.5589, -13.6592};
+    constexpr VECTOR3 Beacon1_left_wing_Location =     {-28.7126, 5.5589, -13.6592};
+    constexpr VECTOR3 Beacon3_upper_deck_Location =     {0.0413, 9.5778, 12.9148};
+    constexpr VECTOR3 Beacon4_belly_landing_gear_Location =     {0.0413, 1.7715, 1.1940};
+    constexpr VECTOR3 Beacon5_APU_Location =     {0.0413, 6.3946, -29.1689};
 
 
 #endif

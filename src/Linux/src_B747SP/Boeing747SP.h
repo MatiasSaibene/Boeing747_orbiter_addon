@@ -69,12 +69,6 @@ const VECTOR3 MFD_BUTTON_POS[12] = {
     {MFD1_BTN12_Location},
 };
 
-const VECTOR3 MFD_CTRL_POS[3] = {
-    {MFD1_PWR_Location},
-    {MFD1_SEL_Location},
-    {MFD1_MNU_Location}
-};
-
 //Define touchdown points
 //For gear down
 static const int ntdvtx_geardown = 14;
@@ -157,8 +151,7 @@ class B747SP : public VESSEL4{
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
         bool clbkLoadVC(int) override;
-        //void clbkMFDMode(int, int) override;
-        //bool clbkVCRedrawEvent(int, int, SURFHANDLE) override;
+
 
         void clbkVisualCreated(VISHANDLE vis, int refcount) override;
         void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
@@ -194,7 +187,6 @@ class B747SP : public VESSEL4{
         BEACONLIGHTSPEC beacon[5];
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
-        SURFHANDLE vcMfdTex;
         char skinpath[256];
         LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
         
@@ -211,6 +203,7 @@ class B747SP : public VESSEL4{
 
         const char fname[17] = "B747SP_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[25] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+        char skinname[256];
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

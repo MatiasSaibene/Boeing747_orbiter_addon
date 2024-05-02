@@ -10,6 +10,7 @@
 #include "VesselAPI.h"
 #include "747SOFIAdefinitions.h"
 #include "747cockpitdefinitions.h"
+#include "XRSound.h"
 
 
 //Vessel parameters
@@ -115,15 +116,21 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
 class B747SOFIA : public VESSEL4{
 
     public:
+        
+        enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
+        
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
+
         enum TelescopeHatchStatus{HATCH_CLOSED, HATCH_OPEN, HATCH_OPENING, HATCH_CLOSING} telescope_hatch_status;
 
         B747SOFIA(OBJHANDLE hVessel, int flightmodel);
         virtual ~B747SOFIA();
         
         void DefineAnimations(void);
+
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
+
         void UpdateLandingGearAnimation(double);
         void ActivateTelescopeHatch(TelescopeHatchStatus telescope_hatch_status);
         void OpenTelescopeHatch(void);
@@ -137,20 +144,25 @@ class B747SOFIA : public VESSEL4{
 
         void LightsControl(void);
 
+        void EnginesAutostart(void);
+        void EnginesAutostop(void);
+        void UpdateEnginesStatus(void);
+
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
+        void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
         bool clbkLoadVC(int) override;
 
-        VISHANDLE visual;
         MESHHANDLE B747SOFIA_mesh, mhcockpit_mesh;  //Mesh handle
         unsigned int uimesh_Cockpit = 1;
-        DEVMESHHANDLE B747SOFIA_dmesh;  //Mesh template handle
-        
+
+        XRSound *m_pXRSound;
+
 
     private:
 
@@ -168,13 +180,13 @@ class B747SOFIA : public VESSEL4{
         double landing_gear_proc;
         double engines_proc;
         double telescope_hatch_proc;
+        double pwr;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
         BEACONLIGHTSPEC beacon[5];
-        SURFHANDLE vcMfdTex;
         LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2;
         
 

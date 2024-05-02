@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __B747100_H
 #define __B747100_H
 
@@ -7,6 +9,9 @@
 #include "Orbitersdk.h"
 #include "VesselAPI.h"
 #include "747100definitions.h"
+#include "747cockpitdefinitions.h"
+#include "747FCdefinitions.h"
+#include "XRSound.h"
 
 //Vessel parameters
 const double B747100_SIZE = 22.8; //Mean radius in meters.
@@ -44,6 +49,8 @@ const double B747100_STAB_C = 3.59; //Stabilizer chord lenght in meters.
 const double B747100_STAB_S = 39.0753; //Stabilizer wing area in m^2.
 
 const double B747100_STAB_A = 2; //Stabilizer wing aspect ratio.
+
+const VECTOR3 B747SP_COCKPIT_OFFSET = Cockpit_offset_Location;
 
 //Define touchdown points
 //For gear down
@@ -87,6 +94,9 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
 class B747100 : public VESSEL4{
 
     public:
+
+        enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
+
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
 
         B747100(OBJHANDLE hVessel, int flightmodel);
@@ -96,14 +106,42 @@ class B747100 : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+
         double UpdateLvlEnginesContrail();
+
+        void ParkingBrake();
+
+        void NextSkin();
+        void ChangeLivery();
+        void ApplyLivery();
+
+        void ActivateBeacons(void);
+
+        void LightsControl(void);
+
+        void EnginesAutostart(void);
+        void EnginesAutostop(void);
+        void UpdateEnginesStatus(void);
 
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
+        void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
+
+        bool clbkLoadVC(int) override;
+
+        void clbkVisualCreated(VISHANDLE vis, int refcount) override;
+        void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
+
+        VISHANDLE visual;
+        MESHHANDLE b747100_mesh, mhcockpit_mesh, fccabin_mesh;  //Mesh handle
+        unsigned int uimesh_Cockpit = 1;
+        DEVMESHHANDLE b747100_dmesh;  //Mesh template handle
+
+        XRSound *m_pXRSound;
 
     private:
 
@@ -119,12 +157,40 @@ class B747100 : public VESSEL4{
         double lvlcontrailengines;
         double landing_gear_proc;
         double engines_proc;
+        double pwr;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        MESHHANDLE b747100_mesh;
+        BEACONLIGHTSPEC beacon[5];
+        FILEHANDLE skinlist, skinlog;
+        SURFHANDLE skin[5];
+        SURFHANDLE vcMfdTex;
+        char skinpath[256];
+        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
+
+        COLOUR4 col_d = {0.9,0.8,1,0};
+	    COLOUR4 col_s = {1.9,0.8,1,0};
+	    COLOUR4 col_a = {0,0,0,0};
+        COLOUR4 ccol_d = {1, 0.508, 0.100};
+        COLOUR4 ccol_s = {1, 0.508, 0.100};
+        COLOUR4 ccol_a = {1, 0.508, 0.100};
+        COLOUR4 fccol_d = {1, 1, 1};
+        COLOUR4 fccol_s = {1, 1, 1};
+        COLOUR4 fccol_a = {1, 1, 1};
+
+        const char fname[18] = "B747100_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
+        const char skindir[26] = "Boeing_747\\B747_100\\Skins";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+        char skinname[256];
+
+        //Name of the textures to be applied.
+        const char texname_fus[14] = "\\Fuselage.dds";
+        const char texname_vs[25] = "\\Vertical_stabilizer.dds";
+        const char texname_rw[16] = "\\Right_wing.dds";
+        const char texname_lw[15] = "\\Left_wing.dds";
+        const char texname_eng[10] = "\\ENG1.dds";
+        
 };
 
 #endif //!__B747100_H

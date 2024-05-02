@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Fri Jan 26 19:40:57 2024
+// Date: Mon Apr 29 21:43:37 2024
 
 
 #include "Orbitersdk.h"
@@ -7,18 +7,6 @@
 #ifndef __747STdefinitions_H
 #define __747STdefinitions_H
 
-
-    const int TXIDX_Fuselage_dds = 1;
-    const int TXIDX_Vertical_stabilizer_dds = 2;
-    const int TXIDX_Right_wing_dds = 3;
-    const int TXIDX_ENG1_dds = 4;
-    const int TXIDX_Metal_chrome_dds = 5;
-    const int TXIDX_Rear_left_landing_gear_dds = 6;
-    const int TXIDX_Rear_left_wing_landing_gear_dds = 7;
-    const int TXIDX_Front_landing_gear_dds = 8;
-    const int TXIDX_Left_wing_dds = 9;
-    const int TXIDX_ENG1_blades_dds = 10;
-    constexpr auto MESH_NAME = "Boeing_747_Supertanker";
 
     const UINT Fuselage_Id = 0;
     const UINT Vertical_stabilizer_Id = 1;

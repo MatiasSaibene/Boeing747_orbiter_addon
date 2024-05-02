@@ -1,3 +1,0 @@
-/home/matias/Escritorio/Diseño 3D/Orbiter/Blender2Orbiter/Jumbo/src_B747_Supertanker/build/CMakeFiles/Boeing747Supertanker.dir
-/home/matias/Escritorio/Diseño 3D/Orbiter/Blender2Orbiter/Jumbo/src_B747_Supertanker/build/CMakeFiles/edit_cache.dir
-/home/matias/Escritorio/Diseño 3D/Orbiter/Blender2Orbiter/Jumbo/src_B747_Supertanker/build/CMakeFiles/rebuild_cache.dir

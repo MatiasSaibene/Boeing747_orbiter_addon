@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747SP
+//          ORBITER MODULE: Boeing 747-400
 //
-//Boeing747SP.cpp
-//Control module for Boeing 747SP vessel class
+//Boeing747_400.cpp
+//Control module for Boeing 747-400 vessel class
 //
 //==========================================
 
@@ -643,7 +643,7 @@ void B747400::NextSkin() {
 
 void B747400::ChangeLivery() {
     const char item[5] = "SKIN";
-    char skinname[256];
+    
     char completedir_fus[256];
     char completedir_vs[256];
     char completedir_rw[256];
@@ -681,8 +681,6 @@ void B747400::ChangeLivery() {
     skin[3] = oapiLoadTexture(completedir_lw);
     skin[4] = oapiLoadTexture(completedir_eng);
 
-    skinlog = oapiOpenFile("skinlog.txt", FILE_OUT, ROOT);
-    oapiWriteLine(skinlog, completedir_eng);
 
     ApplyLivery();
 }
@@ -914,66 +912,6 @@ bool B747400::clbkLoadVC(int id){
 
 }
 
-/* void B747SP::clbkMFDMode(int mfd, int mode){
-	oapiVCTriggerRedrawArea(-1, VC_AREA_MFDKEYS);
-} */
-
-/* bool B747SP::clbkVCRedrawEvent(int id, int ev, SURFHANDLE surf)
-{
-	oapi::Sketchpad* sp;
-	static const int mfdUpdateLineup[1] = { MFD_LEFT };
-
-	switch (id)
-	{
-	case VC_AREA_MFDKEYS:
-	{
-		sp = oapiGetSketchpad(surf);
-
-		if (!sp) return false;
-
-		sp->SetFont(drawRes.mfdLabelsFont);
-		sp->SetTextColor(0xFFCC00);
-		sp->SetTextAlign(oapi::Sketchpad::CENTER, oapi::Sketchpad::BASELINE);
-
-		int x = 0;
-
-		for (UINT i = 0; i < 4; ++i)
-		{
-			for (UINT j = 0; j < 6; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + (j * 50), label, strlen(label));
-			}
-
-			x += 50;
-
-			for (UINT j = 6; j < 12; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + ((j - 6) * 50), label, strlen(label));
-			}
-
-			x += 50;
-		}
-
-		x = 0;
-		int y = 300;
-
-		oapiReleaseSketchpad(sp);
-
-		return true;
-	    }	
-	}
-
-	return false;
-} */
-
 int B747400::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
     if(key == OAPI_KEY_G && down){
@@ -1034,9 +972,9 @@ void B747400::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "Right_wing.dds"); skin[2] = oapiLoadTexture(fname);
 
-            strcpy(fname+n, "ENG1.dds"); skin[3] = oapiLoadTexture(fname);
+            strcpy(fname+n, "Left_wing.dds"); skin[3] = oapiLoadTexture(fname);
 
-            strcpy(fname+n, "Left_wing.dds"); skin[4] = oapiLoadTexture(fname);
+            strcpy(fname+n, "ENG1.dds"); skin[4] = oapiLoadTexture(fname);
 
         } else {
             ParseScenarioLineEx(line, vs);
@@ -1052,8 +990,7 @@ void B747400::clbkSaveState(FILEHANDLE scn){
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
-    if (skinpath[0])
-		oapiWriteScenario_string (scn, "SKIN", skinpath);
+    oapiWriteScenario_string (scn, "SKIN", skinname);
 }
 
 //////////Logic for animations

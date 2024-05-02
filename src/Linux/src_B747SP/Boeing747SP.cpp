@@ -18,7 +18,7 @@
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
-bool engines_on = false;
+bool engines_on;
 
 
 // 1. vertical lift component
@@ -73,6 +73,8 @@ B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmode
     landing_gear_proc = 0.0;
 
 	landing_gear_status = GEAR_DOWN;
+
+    engines_on = false;
 
 	DefineAnimations();
 
@@ -475,82 +477,6 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
 
-    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
-    THRUSTER_HANDLE th_rcs[24], th_group[4];
-        
-        //RCS1
-    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS2
-    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS3
-    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS4
-    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-    //Define RCS groups
-    th_group[0] = th_rcs[3];
-    th_group[1] = th_rcs[9];
-    th_group[2] = th_rcs[15];
-    th_group[3] = th_rcs[21];
-    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
-
-    th_group[0] = th_rcs[0];
-	th_group[1] = th_rcs[6];
-	th_group[2] = th_rcs[12];
-	th_group[3] = th_rcs[18];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
-
-	th_group[0] = th_rcs[10];
-	th_group[1] = th_rcs[22];
-	th_group[2] = th_rcs[1];
-	th_group[3] = th_rcs[13];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
-
-	th_group[0] = th_rcs[4];
-	th_group[1] = th_rcs[16];
-    th_group[2] = th_rcs[7];
-	th_group[3] = th_rcs[19];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
-
-	th_group[0] = th_rcs[6];
-	th_group[1] = th_rcs[15];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
-
-	th_group[0] = th_rcs[3];
-	th_group[1] = th_rcs[18];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
- */
-
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
@@ -643,13 +569,13 @@ void B747SP::NextSkin() {
 
 void B747SP::ChangeLivery() {
     const char item[5] = "SKIN";
-    char skinname[256];
+    
     char completedir_fus[256];
     char completedir_vs[256];
     char completedir_rw[256];
     char completedir_eng[256];
     char completedir_lw[256];
-    const char SKINLIST[][15] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};
+    const char SKINLIST[][7] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};
     
     skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
     oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
@@ -667,13 +593,13 @@ void B747SP::ChangeLivery() {
     strcat(completedir_rw, skinname);
     strcat(completedir_rw, texname_rw);
 
-    strcpy(completedir_eng, skindir);
-    strcat(completedir_eng, skinname);
-    strcat(completedir_eng, texname_eng);
-
     strcpy(completedir_lw, skindir);
     strcat(completedir_lw, skinname);
     strcat(completedir_lw, texname_lw);
+
+    strcpy(completedir_eng, skindir);
+    strcat(completedir_eng, skinname);
+    strcat(completedir_eng, texname_eng);
 
     skin[0] = oapiLoadTexture(completedir_fus);
     skin[1] = oapiLoadTexture(completedir_vs);
@@ -697,7 +623,7 @@ void B747SP::ApplyLivery(){
 
     if(skin[3]) oapiSetTexture(b747sp_dmesh, 8, skin[3]);
 
-    if(skin[4]) oapiSetTexture(b747sp_dmesh, 10, skin[4]);
+    if(skin[4]) oapiSetTexture(b747sp_dmesh, 9, skin[4]);
 
 }
 
@@ -889,88 +815,9 @@ bool B747SP::clbkLoadVC(int id){
         break;
     }
 
-
-    //MFDs setup
-
-    /* static VCMFDSPEC mfds1 = {1, 20};
-    oapiVCRegisterMFD(MFD_LEFT, &mfds1);
-    
-    for(int index = 0; index < 12; ++index){
-		oapiVCRegisterArea((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_LBUP, PANEL_MAP_NONE, NULL);
-		oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), MFD_BUTTON_POS[index], .02);
-	}
-
-    for(int index = 0; index < 3; ++index){
-        oapiVCRegisterArea((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER,PANEL_MOUSE_LBDOWN, PANEL_MAP_NONE, NULL);
-        oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), MFD_CTRL_POS[index], .02);
-    }
-
-    vcMfdTex = oapiGetTextureHandle(mhcockpit_mesh, TEX_MFDKEYS);
-	oapiVCRegisterArea(VC_AREA_MFDKEYS, _R(0, 0, 512, 512), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE, PANEL_MAP_BACKGROUND, vcMfdTex);
-*/
     return true; 
 
 }
-
-/* void B747SP::clbkMFDMode(int mfd, int mode){
-	oapiVCTriggerRedrawArea(-1, VC_AREA_MFDKEYS);
-} */
-
-/* bool B747SP::clbkVCRedrawEvent(int id, int ev, SURFHANDLE surf)
-{
-	oapi::Sketchpad* sp;
-	static const int mfdUpdateLineup[1] = { MFD_LEFT };
-
-	switch (id)
-	{
-	case VC_AREA_MFDKEYS:
-	{
-		sp = oapiGetSketchpad(surf);
-
-		if (!sp) return false;
-
-		sp->SetFont(drawRes.mfdLabelsFont);
-		sp->SetTextColor(0xFFCC00);
-		sp->SetTextAlign(oapi::Sketchpad::CENTER, oapi::Sketchpad::BASELINE);
-
-		int x = 0;
-
-		for (UINT i = 0; i < 4; ++i)
-		{
-			for (UINT j = 0; j < 6; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + (j * 50), label, strlen(label));
-			}
-
-			x += 50;
-
-			for (UINT j = 6; j < 12; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + ((j - 6) * 50), label, strlen(label));
-			}
-
-			x += 50;
-		}
-
-		x = 0;
-		int y = 300;
-
-		oapiReleaseSketchpad(sp);
-
-		return true;
-	    }	
-	}
-
-	return false;
-} */
 
 int B747SP::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
@@ -1020,10 +867,10 @@ void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
         } else if(!strncasecmp(line, "SKIN", 4)){
-            sscanf(line+4, "%s", skinpath);
+            sscanf(line+4, "%s", skinname);
             char fname[256];
             strcpy(fname, "Boeing_747\\B747SP\\Skins\\");
-            strcat(fname, skinpath);
+            strcat(fname, skinname);
             int n = strlen(fname); fname[n++] = '\\';
 
             strcpy(fname+n, "Fuselage.dds"); skin[0] = oapiLoadTexture(fname);
@@ -1032,9 +879,9 @@ void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "Right_wing.dds"); skin[2] = oapiLoadTexture(fname);
 
-            strcpy(fname+n, "ENG1.dds"); skin[3] = oapiLoadTexture(fname);
+            strcpy(fname+n, "Left_wing.dds"); skin[3] = oapiLoadTexture(fname);
 
-            strcpy(fname+n, "Left_wing.dds"); skin[4] = oapiLoadTexture(fname);
+            strcpy(fname+n, "ENG1.dds"); skin[4] = oapiLoadTexture(fname);
 
         } else {
             ParseScenarioLineEx(line, vs);
@@ -1050,8 +897,7 @@ void B747SP::clbkSaveState(FILEHANDLE scn){
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
-    if (skinpath[0])
-		oapiWriteScenario_string (scn, "SKIN", skinpath);
+    oapiWriteScenario_string (scn, "SKIN", skinname);
 }
 
 //////////Logic for animations

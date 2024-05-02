@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747SP
+//          ORBITER MODULE: Boeing 747-8
 //
-//Boeing747SP.cpp
-//Control module for Boeing 747SP vessel class
+//Boeing747_8.cpp
+//Control module for Boeing 747-8 vessel class
 //
 //==========================================
 

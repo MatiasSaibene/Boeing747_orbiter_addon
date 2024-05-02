@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747-100
+//          ORBITER MODULE: Boeing 747-SCA
 //
-//Boeing747_100.cpp
-//Control module for Boeing 747-100 vessel class
+//Boeing747_SCA.cpp
+//Control module for Boeing 747-SCA vessel class
 //
 //==========================================
 
@@ -13,10 +13,12 @@
 #include "Boeing747_SCA.h"
 #include <cstring>
 #include <cstdio>
-#include <cstdint>
 #include <algorithm>
 
 bool parkingBrakeEnabled;
+bool lights_on;
+bool engines_on;
+
 
 // 1. vertical lift component
 
@@ -459,6 +461,105 @@ void B747SCA::ParkingBrake(){
 
 }
 
+void B747SCA::ActivateBeacons(){
+
+    for(int i = 0; i < 5; i++){
+		if(!beacon[i].active){
+				beacon[i].active = true;
+		} else {
+				beacon[i].active = false;
+		}
+	}
+}
+
+void B747SCA::LightsControl(void){
+
+    if(!lights_on){
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+
+        cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        cpl2 = AddPointLight((PL2_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl2->SetVisibility(LightEmitter::VIS_COCKPIT);
+
+        lights_on = true;
+    } else {
+        DelLightEmitter(l1);
+        DelLightEmitter(l2);
+        DelLightEmitter(l3);
+        DelLightEmitter(l4);
+
+        DelLightEmitter(cpl1);
+        DelLightEmitter(cpl2);
+
+        lights_on = false;
+    }
+}
+
+void B747SCA::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747SCA::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747SCA::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
+bool B747SCA::clbkLoadVC(int id){
+
+    switch(id){
+        case 0 : //Commander
+            SetCameraOffset(Captains_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 1, -1, 2);
+        break;
+
+        case 1 : //First officer
+            SetCameraOffset(First_officer_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(0, -1, -1, 2);
+        break;
+
+        case 2: //Engineer
+            SetCameraOffset(Engineer_camera_Location);
+            SetCameraDefaultDirection(_V(1, 0, 0));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(1, -1, -1, 3);
+            m_pXRSound->StopWav(cabin_ambiance);
+        break;
+
+    }
+
+    return true; 
+
+}
+
 int B747SCA::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
     if(key == OAPI_KEY_G && down){
@@ -469,8 +570,30 @@ int B747SCA::clbkConsumeBufferedKey(int key, bool down, char *kstate){
         ParkingBrake();
         return 1;
     }
+    if(key == OAPI_KEY_B && down){
+        ActivateBeacons();
+        return 1;
+    }
+    if(key == OAPI_KEY_F && down){
+        LightsControl();
+        return 1;
+    }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
+    }
     return 0;
 }
+
 
 //Load landing gear status from scenario file
 void B747SCA::clbkLoadStateEx(FILEHANDLE scn, void *vs){
@@ -538,6 +661,24 @@ double B747SCA::UpdateLvlEnginesContrail(){
 void B747SCA::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+}
+
+void B747SCA::clbkPostCreation(){
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
 }
 
 void B747SCA::clbkPreStep(double simt, double simdt, double mjd){

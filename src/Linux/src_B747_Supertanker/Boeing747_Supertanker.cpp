@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747-100
+//          ORBITER MODULE: Boeing 747-Supertanker
 //
-//Boeing747_100.cpp
-//Control module for Boeing 747-100 vessel class
+//Boeing747_Supertanker.cpp
+//Control module for Boeing 747-Supertanker vessel class
 //
 //==========================================
 
@@ -18,6 +18,8 @@
 bool parkingBrakeEnabled;
 bool water_valve_open;
 bool lights_on;
+static int currentSkin = 0;
+bool engines_on;
 
 // 1. vertical lift component
 
@@ -74,19 +76,20 @@ VESSEL4(hVessel, flightmodel){
 
 	landing_gear_status = GEAR_DOWN;
 
-    B747ST_mesh = NULL;
+    b747st_mesh = NULL;
 
     mhcockpit_mesh = NULL;
 
 	DefineAnimations();
+
+    skinpath[0] = '\0';
+    for (int i = 0; i < 5; i++)
+        skin[i] = 0;
 }
 
 //Destructor
 B747ST::~B747ST(){
 
-    oapiDeleteMesh(B747ST_mesh);
-
-    this->VESSEL4::~VESSEL4();
 }
 
 void B747ST::DefineAnimations(void){
@@ -539,12 +542,100 @@ void B747ST::clbkSetClassCaps(FILEHANDLE cfg){
 	}
 
     //Add the mesh
-    SetMeshVisibilityMode (AddMesh (B747ST_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747_Supertanker")), MESHVIS_EXTERNAL);
+    SetMeshVisibilityMode (AddMesh (b747st_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747_Supertanker")), MESHVIS_EXTERNAL);
 
     //Add the mesh for the cockpit
     SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
 
 }
+
+void B747ST::clbkVisualCreated(VISHANDLE vis, int refcount){
+
+    visual = vis;
+
+    b747st_dmesh = GetDevMesh(vis, 0);
+
+    ApplyLivery();
+
+
+}
+
+void B747ST::clbkVisualDestroyed(VISHANDLE vis, int refcount){
+
+    visual = NULL;
+    b747st_dmesh = NULL;
+
+}
+
+void B747ST::NextSkin() {
+    if (currentSkin >= 2) {
+        currentSkin = 0;
+    }
+
+    ChangeLivery();
+    currentSkin++;
+}
+
+void B747ST::ChangeLivery() {
+    const char item[5] = "SKIN";
+    char skinname[256];
+    char completedir_fus[256];
+    char completedir_vs[256];
+    char completedir_rw[256];
+    char completedir_eng[256];
+    char completedir_lw[256];
+    const char SKINLIST[][6] = {"SKIN1", "SKIN2"};
+    
+    skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
+    oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
+    
+
+    strcpy(completedir_fus, skindir);
+    strcat(completedir_fus, skinname);
+    strcat(completedir_fus, texname_fus);
+
+    strcpy(completedir_vs, skindir);
+    strcat(completedir_vs, skinname);
+    strcat(completedir_vs, texname_vs);
+
+    strcpy(completedir_rw, skindir);
+    strcat(completedir_rw, skinname);
+    strcat(completedir_rw, texname_rw);
+
+    strcpy(completedir_eng, skindir);
+    strcat(completedir_eng, skinname);
+    strcat(completedir_eng, texname_eng);
+
+    strcpy(completedir_lw, skindir);
+    strcat(completedir_lw, skinname);
+    strcat(completedir_lw, texname_lw);
+
+    skin[0] = oapiLoadTexture(completedir_fus);
+    skin[1] = oapiLoadTexture(completedir_vs);
+    skin[2] = oapiLoadTexture(completedir_rw);
+    skin[3] = oapiLoadTexture(completedir_eng);
+    skin[4] = oapiLoadTexture(completedir_lw);
+
+
+    ApplyLivery();
+}
+
+void B747ST::ApplyLivery(){
+
+    if(!b747st_dmesh) return;
+
+    if(skin[0]) oapiSetTexture(b747st_dmesh, 1, skin[0]);
+
+    if(skin[1]) oapiSetTexture(b747st_dmesh, 2, skin[1]);
+
+    if(skin[2]) oapiSetTexture(b747st_dmesh, 3, skin[2]);
+
+    if(skin[3]) oapiSetTexture(b747st_dmesh, 4, skin[3]);
+
+    if(skin[4]) oapiSetTexture(b747st_dmesh, 9, skin[4]);
+
+}
+
 
 void B747ST::LightsControl(void){
 
@@ -638,10 +729,44 @@ void B747ST::ActivateBeacons(){
 
 }
 
+void B747ST::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747ST::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747ST::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
 int B747ST::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
     if(key == OAPI_KEY_G && down){
         SetGearDown();
+        return 1;
+    }
+    if(key == OAPI_KEY_NUMPADENTER && down){
+        ParkingBrake();
         return 1;
     }
     if(key == OAPI_KEY_W && down){
@@ -655,6 +780,23 @@ int B747ST::clbkConsumeBufferedKey(int key, bool down, char *kstate){
     if(key == OAPI_KEY_B && down){
         ActivateBeacons();
         return 1;
+    }
+    if(key == OAPI_KEY_V && down){
+        NextSkin();
+        return 1;
+    }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
     }
     return 0;
 }
@@ -725,6 +867,25 @@ double B747ST::UpdateLvlEnginesContrail(){
 void B747ST::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+    UpdateEnginesStatus();
+}
+
+void B747ST::clbkPostCreation(){
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
 }
 
 void B747ST::clbkPreStep(double simt, double simdt, double mjd){
@@ -743,6 +904,8 @@ void B747ST::clbkPreStep(double simt, double simdt, double mjd){
         SetAnimation(anim_engines, 0.0);
     }
 }
+
+///////////////
 
 DLLCLBK void InitModule(MODULEHANDLE hModule){
 

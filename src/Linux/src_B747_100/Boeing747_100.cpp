@@ -13,8 +13,13 @@
 #include "Boeing747_100.h"
 #include <cstring>
 #include <cstdio>
-#include <cstdint>
 #include <algorithm>
+
+bool parkingBrakeEnabled;
+bool lights_on;
+static int currentSkin = 0;
+bool engines_on;
+
 
 // 1. vertical lift component
 
@@ -71,17 +76,25 @@ VESSEL4(hVessel, flightmodel){
 
 	landing_gear_status = GEAR_DOWN;
 
-    b747100_mesh = oapiLoadMesh("Boeing747\\Boeing_747_100");
+    engines_on = false;
 
 	DefineAnimations();
+
+    b747100_mesh = NULL;
+
+    mhcockpit_mesh = NULL;
+
+    fccabin_mesh = NULL;
+
+    skinpath[0] = '\0';
+    for (int i = 0; i < 5; i++)
+        skin[i] = 0;
+
 }
 
 //Destructor
 B747100::~B747100(){
 
-    oapiDeleteMesh(b747100_mesh);
-
-    this->VESSEL4::~VESSEL4();
 }
 
 void B747100::DefineAnimations(void){
@@ -440,7 +453,309 @@ void B747100::clbkSetClassCaps(FILEHANDLE cfg){
     CreateControlSurface3(AIRCTRL_RUDDER, 20.6937, 1.7, (Rudder_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_rudder);
 
     //Add the mesh
-    AddMesh(b747100_mesh);
+    SetMeshVisibilityMode(AddMesh(b747100_mesh = oapiLoadMesh("Boeing747\\Boeing_747_100")), MESHVIS_EXTERNAL);
+
+    //Add the mesh for the cockpit
+    SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
+
+    //Add the mesh for the First Class cabin
+    SetMeshVisibilityMode(AddMesh(fccabin_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_first_class")), MESHVIS_VC);
+
+    //Define beacons
+
+    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
+    static VECTOR3 beaconcol = {0, 1, 0};
+
+    for(int i = 0; i < 5; i++){
+		beacon[i].shape = BEACONSHAPE_STAR;
+		beacon[i].pos = beaconpos+i;
+		beacon[i].col = &beaconcol;
+		beacon[i].size = 1;
+		beacon[i].falloff = 0.4;
+		beacon[i].period = 1;
+		beacon[i].duration = 0.1;
+		beacon[i].tofs = 0.2;
+		beacon[i].active = false;
+		AddBeacon(beacon+i);
+	}
+
+}
+
+void B747100::clbkVisualCreated(VISHANDLE vis, int refcount){
+
+    visual = vis;
+
+    b747100_dmesh = GetDevMesh(vis, 0);
+
+    ApplyLivery();
+
+
+}
+
+void B747100::clbkVisualDestroyed(VISHANDLE vis, int refcount){
+
+    visual = NULL;
+    b747100_dmesh = NULL;
+
+}
+
+void B747100::NextSkin() {
+    if (currentSkin >= 15) {
+        currentSkin = 0;
+    }
+
+    ChangeLivery();
+    currentSkin++;
+}
+
+void B747100::ChangeLivery() {
+    const char item[5] = "SKIN";
+    
+    char completedir_fus[256];
+    char completedir_vs[256];
+    char completedir_rw[256];
+    char completedir_eng[256];
+    char completedir_lw[256];
+    const char SKINLIST[][7] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};
+    
+    skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
+    oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
+    
+
+    strcpy(completedir_fus, skindir);
+    strcat(completedir_fus, skinname);
+    strcat(completedir_fus, texname_fus);
+
+    strcpy(completedir_vs, skindir);
+    strcat(completedir_vs, skinname);
+    strcat(completedir_vs, texname_vs);
+
+    strcpy(completedir_rw, skindir);
+    strcat(completedir_rw, skinname);
+    strcat(completedir_rw, texname_rw);
+
+    strcpy(completedir_eng, skindir);
+    strcat(completedir_eng, skinname);
+    strcat(completedir_eng, texname_eng);
+
+    strcpy(completedir_lw, skindir);
+    strcat(completedir_lw, skinname);
+    strcat(completedir_lw, texname_lw);
+
+    skin[0] = oapiLoadTexture(completedir_fus);
+    skin[1] = oapiLoadTexture(completedir_vs);
+    skin[2] = oapiLoadTexture(completedir_rw);
+    skin[3] = oapiLoadTexture(completedir_lw);
+    skin[4] = oapiLoadTexture(completedir_eng);
+
+
+    ApplyLivery();
+}
+
+void B747100::ApplyLivery(){
+
+    if(!b747100_dmesh) return;
+
+    if(skin[0]) oapiSetTexture(b747100_dmesh, 1, skin[0]);
+
+    if(skin[1]) oapiSetTexture(b747100_dmesh, 2, skin[1]);
+
+    if(skin[2]) oapiSetTexture(b747100_dmesh, 3, skin[2]);
+
+    if(skin[3]) oapiSetTexture(b747100_dmesh, 8, skin[3]);
+
+    if(skin[4]) oapiSetTexture(b747100_dmesh, 9, skin[4]);
+
+}
+
+void B747100::ParkingBrake(){
+
+    if(!parkingBrakeEnabled){
+        SetWheelbrakeLevel(1, 0, true);
+        parkingBrakeEnabled = true;
+    } else {
+        SetWheelbrakeLevel(0, 0, true);
+        parkingBrakeEnabled = false;
+    }
+
+}
+
+void B747100::ActivateBeacons(){
+
+    for(int i = 0; i < 5; i++){
+		if(!beacon[i].active){
+				beacon[i].active = true;
+		} else {
+				beacon[i].active = false;
+		}
+	}
+}
+
+void B747100::LightsControl(void){
+
+    if(!lights_on){
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+
+        cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        cpl2 = AddPointLight((PL2_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl2->SetVisibility(LightEmitter::VIS_COCKPIT);
+
+        fcl1 = AddPointLight((FC_PL1_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl2 = AddPointLight((FC_PL2_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl2->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl3 = AddPointLight((FC_PL3_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl3->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl4 = AddPointLight((FC_PL4_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl4->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl5 = AddPointLight((FC_PL5_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl5->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl6 = AddPointLight((FC_PL6_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl6->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl7 = AddPointLight((FC_PL7_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl7->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl8 = AddPointLight((FC_PL8_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl8->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl9 = AddPointLight((FC_PL9_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl9->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl10 = AddPointLight((FC_PL10_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl10->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl11 = AddPointLight((FC_PL11_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl11->SetVisibility(LightEmitter::VIS_COCKPIT);
+        fcl12 = AddPointLight((FC_PL12_Location), 1, 0.5, 0, 0.5, fccol_d, fccol_s, fccol_a);
+        fcl12->SetVisibility(LightEmitter::VIS_COCKPIT);
+
+        lights_on = true;
+    } else {
+        DelLightEmitter(l1);
+        DelLightEmitter(l2);
+        DelLightEmitter(l3);
+        DelLightEmitter(l4);
+
+        DelLightEmitter(cpl1);
+        DelLightEmitter(cpl2);
+
+        DelLightEmitter(fcl1);
+        DelLightEmitter(fcl2);
+        DelLightEmitter(fcl3);
+        DelLightEmitter(fcl4);
+        DelLightEmitter(fcl5);
+        DelLightEmitter(fcl6);
+        DelLightEmitter(fcl7);
+        DelLightEmitter(fcl8);
+        DelLightEmitter(fcl9);
+        DelLightEmitter(fcl10);
+        DelLightEmitter(fcl11);
+        DelLightEmitter(fcl12);
+
+        lights_on = false;
+    }
+}
+
+void B747100::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747100::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747100::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
+bool B747100::clbkLoadVC(int id){
+
+    switch(id){
+        case 0 : //Commander
+            SetCameraOffset(Captains_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 1, -1, 2);
+        break;
+
+        case 1 : //First officer
+            SetCameraOffset(First_officer_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(0, -1, -1, 2);
+        break;
+
+        case 2: //Engineer
+            SetCameraOffset(Engineer_camera_Location);
+            SetCameraDefaultDirection(_V(1, 0, 0));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(1, -1, -1, 3);
+            m_pXRSound->StopWav(cabin_ambiance);
+        break;
+
+        case 3: //First class cabin
+            SetCameraOffset(Camera_FC_seat1_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(8, -1, 2, 4);
+            m_pXRSound->PlayWav(cabin_ambiance);
+        break;
+
+        case 4:
+            SetCameraOffset(Camera_FC_seat2_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(7, -1, 3, 5);
+        break;
+
+        case 5:
+            SetCameraOffset(Camera_FC_seat3_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(6, -1, 4, -1);
+        break;
+
+        case 6:
+            SetCameraOffset(Camera_FC_seat4_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 5, 7, -1);
+        break;
+
+        case 7:
+            SetCameraOffset(Camera_FC_seat5_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 4, 8, 6);
+        break;
+
+        case 8:
+            SetCameraOffset(Camera_FC_seat6_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 3, 2, 7);
+        break;
+    }
+
+    return true; 
 
 }
 
@@ -449,6 +764,35 @@ int B747100::clbkConsumeBufferedKey(int key, bool down, char *kstate){
     if(key == OAPI_KEY_G && down){
         SetGearDown();
         return 1;
+    }
+    if(key == OAPI_KEY_NUMPADENTER && down){
+        ParkingBrake();
+        return 1;
+    }
+    if(key == OAPI_KEY_B && down){
+        ActivateBeacons();
+        return 1;
+    }
+    if(key == OAPI_KEY_F && down){
+        LightsControl();
+        return 1;
+    }
+    if(key == OAPI_KEY_V && down){
+        NextSkin();
+        return 1;
+    }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
     }
     return 0;
 }
@@ -462,6 +806,23 @@ void B747100::clbkLoadStateEx(FILEHANDLE scn, void *vs){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+        } else if(!strncasecmp(line, "SKIN", 4)){
+            sscanf(line+4, "%s", skinname);
+            char fname[256];
+            strcpy(fname, "Boeing_747\\B747SP\\Skins\\");
+            strcat(fname, skinname);
+            int n = strlen(fname); fname[n++] = '\\';
+
+            strcpy(fname+n, "Fuselage.dds"); skin[0] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Vertical_stabilizer.dds"); skin[1] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Right_wing.dds"); skin[2] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "Left_wing.dds"); skin[3] = oapiLoadTexture(fname);
+
+            strcpy(fname+n, "ENG1.dds"); skin[4] = oapiLoadTexture(fname);
+
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -475,7 +836,8 @@ void B747100::clbkSaveState(FILEHANDLE scn){
     SaveDefaultState(scn);
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
-    
+
+    oapiWriteScenario_string (scn, "SKIN", skinname);    
 }
 
 //////////Logic for animations
@@ -519,6 +881,25 @@ double B747100::UpdateLvlEnginesContrail(){
 void B747100::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+    UpdateEnginesStatus();
+}
+
+void B747100::clbkPostCreation(){
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
 }
 
 void B747100::clbkPreStep(double simt, double simdt, double mjd){
@@ -537,6 +918,9 @@ void B747100::clbkPreStep(double simt, double simdt, double mjd){
         SetAnimation(anim_engines, 0.0);
     }
 }
+
+
+////////////////////////
 
 DLLCLBK void InitModule(MODULEHANDLE hModule){
 

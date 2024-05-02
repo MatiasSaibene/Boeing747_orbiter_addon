@@ -10,6 +10,7 @@
 #include "VesselAPI.h"
 #include "747STdefinitions.h"
 #include "747cockpitdefinitions.h"
+#include "XRSound.h"
 
 //Vessel parameters
 const double B747ST_SIZE = 22.8; //Mean radius in meters.
@@ -98,6 +99,9 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
 class B747ST : public VESSEL4{
 
     public:
+
+        enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
+
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
 
         B747ST(OBJHANDLE hVessel, int flightmodel);
@@ -107,23 +111,43 @@ class B747ST : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+
         double UpdateLvlEnginesContrail();
 
         void ParkingBrake();
 
         void DischargeWater();
 
+        void NextSkin();
+        void ChangeLivery();
+        void ApplyLivery();
+
         void LightsControl();
         void ActivateBeacons();
+
+        void EnginesAutostart(void);
+        void EnginesAutostop(void);
+        void UpdateEnginesStatus(void);
 
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
+        void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
         bool clbkLoadVC(int) override;
+
+        void clbkVisualCreated(VISHANDLE vis, int refcount) override;
+        void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
+
+        VISHANDLE visual;
+        MESHHANDLE b747st_mesh, mhcockpit_mesh, fccabin_mesh;  //Mesh handle
+        unsigned int uimesh_Cockpit = 1;
+        DEVMESHHANDLE b747st_dmesh;  //Mesh template handle
+
+        XRSound *m_pXRSound;
 
     private:
 
@@ -139,14 +163,16 @@ class B747ST : public VESSEL4{
         double lvlcontrailengines;
         double landing_gear_proc;
         double engines_proc;
+        double pwr;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4], wdisch[2];
         THGROUP_HANDLE thg_main, thg_retro, wdisch_main;
-        MESHHANDLE B747ST_mesh, mhcockpit_mesh;
-        unsigned int uimesh_Cockpit = 1;
         BEACONLIGHTSPEC beacon[5];
+        FILEHANDLE skinlist, skinlog;
+        SURFHANDLE skin[5];
+        char skinpath[256];
         LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2;
 
         COLOUR4 col_d = {0.9,0.8,1,0};
@@ -155,6 +181,16 @@ class B747ST : public VESSEL4{
         COLOUR4 ccol_d = {1, 0.508, 0.100};
         COLOUR4 ccol_s = {1, 0.508, 0.100};
         COLOUR4 ccol_a = {1, 0.508, 0.100};
+
+        const char fname[17] = "B747ST_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
+        const char skindir[35] = "Boeing_747\\B747_Supertanker\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+
+        //Name of the textures to be applied.
+        const char texname_fus[14] = "\\Fuselage.dds";
+        const char texname_vs[25] = "\\Vertical_stabilizer.dds";
+        const char texname_rw[16] = "\\Right_wing.dds";
+        const char texname_lw[15] = "\\Left_wing.dds";
+        const char texname_eng[10] = "\\ENG1.dds";
 };
 
 #endif //!__B747ST_H

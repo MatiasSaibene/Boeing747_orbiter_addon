@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
      inkscape:zoom="0.24072266"
-     inkscape:cx="1964.9168"
-     inkscape:cy="1036.4625"
+     inkscape:cx="1628.43"
+     inkscape:cy="1015.6917"
      inkscape:window-width="1366"
      inkscape:window-height="724"
      inkscape:window-x="-1"
@@ -1721,16 +1721,4 @@
      style="fill:none;stroke:#080000;stroke-width:1.91064;stroke-linecap:square"
      d="m 619.24875,783.00178 h 53.371 c 4.3487,0 7.8497,3.53661 7.8497,7.92959 v 48.75473 c 0,4.393 -3.501,7.92959 -7.8497,7.92959 h -53.371 c -4.3487,0 -7.8495,-3.53659 -7.8495,-7.92959 v -48.75473 c 0,-4.39298 3.5008,-7.92959 7.8495,-7.92959 z"
      sodipodi:nodetypes="sssssssss" />
-  <text
-     xml:space="preserve"
-     style="font-size:11.9963px;line-height:0;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;fill:none;stroke-width:0.937211;stroke-dasharray:none;stop-color:#000000"
-     x="-1914.6494"
-     y="768.88245"
-     id="text1"
-     transform="scale(-1,1)"><tspan
-       sodipodi:role="line"
-       id="tspan1"
-       x="-1914.6494"
-       y="768.88245"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Michroma;-inkscape-font-specification:Michroma;stroke:#000000;stroke-width:0.937211;stroke-dasharray:none;stroke-opacity:1;fill:none">CITY OF EVERETT</tspan></text>
 </svg>

@@ -7,6 +7,8 @@
 #include "Orbitersdk.h"
 #include "VesselAPI.h"
 #include "747SCAdefinitions.h"
+#include "747cockpitdefinitions.h"
+#include "XRSound.h"
 
 //Vessel parameters
 const double B747SCA_SIZE = 22.8; //Mean radius in meters.
@@ -87,6 +89,9 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
 class B747SCA : public VESSEL4{
 
     public:
+
+        enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
+
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
 
         B747SCA(OBJHANDLE hVessel, int flightmodel);
@@ -96,16 +101,33 @@ class B747SCA : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+
         double UpdateLvlEnginesContrail();
 
         void ParkingBrake();
+
+        void ActivateBeacons(void);
+
+        void LightsControl(void);
+
+        void EnginesAutostart(void);
+        void EnginesAutostop(void);
+        void UpdateEnginesStatus(void);
 
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
         void clbkSaveState(FILEHANDLE scn) override;
         void clbkPreStep(double, double, double) override;
+        void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
         int clbkConsumeBufferedKey(int, bool, char *) override;
+
+        bool clbkLoadVC(int) override;
+
+        MESHHANDLE b747sca_mesh, mhcockpit_mesh;
+        unsigned int uimesh_Cockpit = 1;
+
+        XRSound *m_pXRSound;
 
     private:
 
@@ -121,12 +143,25 @@ class B747SCA : public VESSEL4{
         double lvlcontrailengines;
         double landing_gear_proc;
         double engines_proc;
+        double pwr;
 
         AIRFOILHANDLE lwing, rwing, lstabilizer, rstabilizer;
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        MESHHANDLE b747sca_mesh;
+        BEACONLIGHTSPEC beacon[5];
+        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
+
+
+        COLOUR4 col_d = {0.9,0.8,1,0};
+	    COLOUR4 col_s = {1.9,0.8,1,0};
+	    COLOUR4 col_a = {0,0,0,0};
+        COLOUR4 ccol_d = {1, 0.508, 0.100};
+        COLOUR4 ccol_s = {1, 0.508, 0.100};
+        COLOUR4 ccol_a = {1, 0.508, 0.100};
+        COLOUR4 fccol_d = {1, 1, 1};
+        COLOUR4 fccol_s = {1, 1, 1};
+        COLOUR4 fccol_a = {1, 1, 1};
 };
 
 #endif //!__B747SCA_H

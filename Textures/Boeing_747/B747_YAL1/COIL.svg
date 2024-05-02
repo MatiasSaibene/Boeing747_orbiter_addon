@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg48"
+   sodipodi:docname="COIL.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs48">
+    <linearGradient
+       id="linearGradient5"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#cb00a1;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+      <stop
+         style="stop-color:#10b656;stop-opacity:1;"
+         offset="0.49676588"
+         id="stop6" />
+      <stop
+         style="stop-color:#0021cc;stop-opacity:1;"
+         offset="0.99353176"
+         id="stop5" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#cb00a1;stop-opacity:1;"
+         offset="0"
+         id="stop3" />
+      <stop
+         style="stop-color:#0021cc;stop-opacity:1;"
+         offset="0.99353176"
+         id="stop1" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3"
+       id="radialGradient3"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3723879,0,0,1.3679099,416.04737,649.81836)"
+       cx="256"
+       cy="768"
+       fx="256"
+       fy="768"
+       r="254.98047" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3"
+       id="radialGradient4"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3723879,0,0,1.3679099,-95.331314,649.81836)"
+       cx="256"
+       cy="768"
+       fx="256"
+       fy="768"
+       r="254.98047" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5"
+       id="linearGradient4"
+       x1="51.072628"
+       y1="923.0155"
+       x2="442.6582"
+       y2="581.3418"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5"
+       id="linearGradient6"
+       gradientUnits="userSpaceOnUse"
+       x1="51.072628"
+       y1="923.0155"
+       x2="442.6582"
+       y2="581.3418"
+       gradientTransform="translate(509.96094)" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview48"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.48144531"
+     inkscape:cx="510.96146"
+     inkscape:cy="512"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg48" />
+  <desc
+     id="desc1">Boeing_747_YAL1.blend, (Blender 3.3.9)</desc>
+  <rect
+     style="opacity:1;fill:#ffffff"
+     id="rect48"
+     width="1024"
+     height="1024"
+     x="0"
+     y="0" />
+  <path
+     id="polygon1"
+     d="M 187.67773 513.01953 L 69.341797 581.3418 L 1.0195312 699.67773 L 1.0195312 836.32227 L 69.341797 954.6582 L 187.67773 1022.9805 L 324.32227 1022.9805 L 442.6582 954.6582 L 510.98047 836.32227 L 510.98047 699.67773 L 442.6582 581.3418 L 324.32227 513.01953 L 187.67773 513.01953 z "
+     style="fill:url(#linearGradient4);fill-opacity:1" />
+  <path
+     id="path2"
+     d="M 187.67773,1445.3927 69.341797,1513.715 1.0195312,1632.0509 v 136.6446 l 68.3222658,118.3359 118.335933,68.3223 h 136.64454 l 118.33593,-68.3223 68.32227,-118.3359 V 1632.0509 L 442.6582,1513.715 324.32227,1445.3927 Z"
+     style="fill:url(#radialGradient4)" />
+  <path
+     id="path3"
+     d="m 699.05641,1445.3927 -118.33593,68.3223 -68.32227,118.3359 v 136.6446 l 68.32227,118.3359 118.33593,68.3223 h 136.64454 l 118.33593,-68.3223 68.32222,-118.3359 V 1632.0509 L 954.03688,1513.715 835.70095,1445.3927 Z"
+     style="fill:url(#radialGradient3)" />
+  <path
+     id="path6"
+     d="M 697.63867,513.01953 579.30274,581.3418 510.98047,699.67773 v 136.64454 l 68.32227,118.33593 118.33593,68.3223 H 834.28321 L 952.61914,954.6582 1020.9414,836.32227 V 699.67773 L 952.61914,581.3418 834.28321,513.01953 Z"
+     style="fill:url(#linearGradient6);fill-opacity:1" />
+</svg>
