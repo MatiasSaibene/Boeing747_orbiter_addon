@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="ENG1_blades.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     id="namedview24"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.48144531"
+     inkscape:cx="510.96146"
+     inkscape:cy="512"
+     inkscape:window-width="1366"
+     inkscape:window-height="724"
+     inkscape:window-x="-1"
+     inkscape:window-y="-1"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24" />
+  <desc
+     id="desc1">Boeing_747_Supertanker.blend, (Blender 3.3.9)</desc>
+  <path
+     id="polygon1"
+     d="M 132.12891 694.12695 L 71.507812 719.23633 L 25.109375 765.63477 L 0 826.25586 L 0 891.87109 L 25.109375 952.49219 L 71.507812 998.89062 L 132.12891 1024 L 197.74414 1024 L 258.36523 998.89062 L 304.76367 952.49219 L 329.87305 891.87109 L 329.87305 826.25586 L 304.76367 765.63477 L 258.36523 719.23633 L 197.74414 694.12695 L 132.12891 694.12695 z "
+     style="fill:#000000;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="239.354,694.127 239.354,119.677 119.677,119.678 119.677,694.127 "
+     id="polygon17"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="329.874,449.550 329.874,1024.000 449.551,1024.000 449.550,449.550 "
+     id="polygon18"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="329.874,449.550 904.323,449.550 904.323,329.873 329.874,329.873 "
+     id="polygon19"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="904.323,210.196 329.874,210.196 329.874,329.873 904.323,329.873 "
+     id="polygon20"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="1024.000,904.323 449.551,904.323 449.551,1024.000 1024.000,1024.000 "
+     id="polygon21"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="449.551,569.227 1024.000,569.227 1024.000,449.550 449.551,449.550 "
+     id="polygon22"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="904.323,90.519 329.874,90.519 329.874,210.196 904.323,210.196 "
+     id="polygon23"
+     style="fill:#1a1a1a;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="1"
+     points="119.677,694.127 119.677,119.677 0.000,119.677 0.000,694.127 "
+     id="polygon24"
+     style="fill:#1a1a1a;stroke:none" />
+  <path
+     style="fill:#ffffff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 164.93652,859.06347 C 102.0854,890.47837 149.90226,767.89655 25.109375,765.63477 120.84036,746.50212 239.354,818.22918 164.93652,859.06347 Z"
+     id="path24"
+     sodipodi:nodetypes="ccc" />
+</svg>
