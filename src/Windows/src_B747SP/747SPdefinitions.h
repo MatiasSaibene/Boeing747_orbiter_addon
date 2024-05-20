@@ -1,82 +1,70 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Sat Jan  6 15:34:36 2024
-
+// Date: Sun Mar 17 14:55:52 2024
+#pragma once
 
 #include "Orbitersdk.h"
 
-#ifndef __747SPDEFINITIONS_H
-#define __747SPDEFINITIONS_H
+#ifndef __747SPdefinitions_H
+#define __747SPdefinitions_H
 
-
-    const int TXIDX_Fuselage_dds = 1;
-    const int TXIDX_Vertical_stabilizer_dds = 2;
-    const int TXIDX_Right_wing_dds = 3;
-    const int TXIDX_ENG1_dds = 4;
-    const int TXIDX_Metal_chrome_dds = 5;
-    const int TXIDX_Rear_left_landing_gear_dds = 6;
-    const int TXIDX_Rear_left_wing_landing_gear_dds = 7;
-    const int TXIDX_Front_landing_gear_dds = 8;
-    const int TXIDX_Left_wing_dds = 9;
-    constexpr auto MESH_NAME = "Boeing_747SP";
 
     const UINT Fuselage_Id = 0;
     const UINT Vertical_stabilizer_Id = 1;
     const UINT Right_stabilizer_Id = 2;
     const UINT Right_wing_Id = 3;
     const UINT Belly_Id = 4;
-    const UINT ENG1_Id = 5;
-    const UINT Engines_attachment_Id = 6;
-    const UINT Rear_left_landing_gear_Id = 7;
-    const UINT Rear_left_wing_landing_gear_Id = 8;
-    const UINT Pylons_Id = 9;
-    const UINT Front_landing_gear_Id = 10;
-    const UINT LAileron_Id = 11;
-    const UINT Flaps_Id = 12;
-    const UINT Right_elevator_trim_Id = 13;
-    const UINT Rudder_Id = 14;
-    const UINT Flaps2_Id = 15;
-    const UINT Left_stabilizer_Id = 16;
-    const UINT Left_elevator_trim_Id = 17;
-    const UINT Left_wing_Id = 18;
-    const UINT Rear_right_landing_gear_Id = 19;
-    const UINT Cockpit_windows_Id = 20;
-    const UINT Raileron_Id = 21;
-    const UINT PSGR_door6_Id = 22;
-    const UINT PSGR_door7_Id = 23;
-    const UINT PSGR_door8_Id = 24;
-    const UINT PSGR_door9_Id = 25;
-    const UINT PSGR_door10_Id = 26;
-    const UINT PSGR_door1_Id = 27;
-    const UINT PSGR_door2_Id = 28;
-    const UINT PSGR_door3_Id = 29;
-    const UINT PSGR_door4_Id = 30;
-    const UINT PSGR_door5_Id = 31;
-    const UINT Rear_right_wing_landing_gear_Id = 32;
-    const UINT ENG2_Id = 33;
-    const UINT ENG3_Id = 34;
-    const UINT ENG4_Id = 35;
-    const UINT CRG_door3_Id = 36;
-    const UINT CRG_door4_Id = 37;
-    const UINT CRG_door2_Id = 38;
-    const UINT CRG_door1_Id = 39;
-    const UINT Front_landing_gear_right_door_Id = 40;
-    const UINT Front_landing_gear_left_door_Id = 41;
-    const UINT Rear_right_landing_gear_door1_Id = 42;
-    const UINT Rear_left_landing_gear_door1_Id = 43;
-    const UINT Rear_right_landing_gear_door2_Id = 44;
-    const UINT Rear_left_landing_gear_door2_Id = 45;
-    const UINT Rear_left_wing_landing_gear_part_Id = 46;
-    const UINT Rear_right_wing_landing_gear_part_Id = 47;
-    const UINT ENG1_blades_Id = 48;
-    const UINT ENG2_blades_Id = 49;
-    const UINT ENG3_blades_Id = 50;
+    const UINT Engines_attachment_Id = 5;
+    const UINT Rear_left_landing_gear_Id = 6;
+    const UINT Rear_left_wing_landing_gear_Id = 7;
+    const UINT Pylons_Id = 8;
+    const UINT Front_landing_gear_Id = 9;
+    const UINT LAileron_Id = 10;
+    const UINT Flaps_Id = 11;
+    const UINT Right_elevator_trim_Id = 12;
+    const UINT Rudder_Id = 13;
+    const UINT Flaps2_Id = 14;
+    const UINT Left_stabilizer_Id = 15;
+    const UINT Left_elevator_trim_Id = 16;
+    const UINT Left_wing_Id = 17;
+    const UINT Rear_right_landing_gear_Id = 18;
+    const UINT Cockpit_windows_Id = 19;
+    const UINT Raileron_Id = 20;
+    const UINT PSGR_door6_Id = 21;
+    const UINT PSGR_door7_Id = 22;
+    const UINT PSGR_door8_Id = 23;
+    const UINT PSGR_door9_Id = 24;
+    const UINT PSGR_door10_Id = 25;
+    const UINT PSGR_door1_Id = 26;
+    const UINT PSGR_door2_Id = 27;
+    const UINT PSGR_door3_Id = 28;
+    const UINT PSGR_door4_Id = 29;
+    const UINT PSGR_door5_Id = 30;
+    const UINT Rear_right_wing_landing_gear_Id = 31;
+    const UINT CRG_door3_Id = 32;
+    const UINT CRG_door4_Id = 33;
+    const UINT CRG_door2_Id = 34;
+    const UINT CRG_door1_Id = 35;
+    const UINT Front_landing_gear_right_door_Id = 36;
+    const UINT Front_landing_gear_left_door_Id = 37;
+    const UINT Rear_right_landing_gear_door1_Id = 38;
+    const UINT Rear_left_landing_gear_door1_Id = 39;
+    const UINT Rear_right_landing_gear_door2_Id = 40;
+    const UINT Rear_left_landing_gear_door2_Id = 41;
+    const UINT Rear_left_wing_landing_gear_part_Id = 42;
+    const UINT Rear_right_wing_landing_gear_part_Id = 43;
+    const UINT ENG1_Id = 44;
+    const UINT ENG1_blades_Id = 45;
+    const UINT ENG2_Id = 46;
+    const UINT ENG2_blades_Id = 47;
+    const UINT ENG3_Id = 48;
+    const UINT ENG3_blades_Id = 49;
+    const UINT ENG4_Id = 50;
     const UINT ENG4_blades_Id = 51;
     constexpr VECTOR3 Fuselage_Location =     {0.0407, 5.5787, 3.7052};
     constexpr VECTOR3 Vertical_stabilizer_Location =     {0.0301, 11.8905, -20.0546};
     constexpr VECTOR3 Right_stabilizer_Location =     {5.1018, 6.9979, -22.4832};
     constexpr VECTOR3 Right_wing_Location =     {8.9798, 4.0812, 2.4350};
     constexpr VECTOR3 Belly_Location =     {0.0073, 3.1470, 4.8536};
-    constexpr VECTOR3 ENG1_Location =     {-20.1022, 2.6239, -0.9198};
     constexpr VECTOR3 Engines_attachment_Location =     {-0.1379, 3.9385, 0.4506};
     constexpr VECTOR3 Rear_left_landing_gear_Location =     {-2.0680, 1.9295, 1.4299};
     constexpr VECTOR3 Rear_left_wing_landing_gear_Location =     {-5.5066, 3.4997, 0.2749};
@@ -104,9 +92,6 @@
     constexpr VECTOR3 PSGR_door4_Location =     {-2.7121, 5.6823, -3.2373};
     constexpr VECTOR3 PSGR_door5_Location =     {-2.3787, 5.6574, -13.8126};
     constexpr VECTOR3 Rear_right_wing_landing_gear_Location =     {5.2733, 0.7407, 0.3515};
-    constexpr VECTOR3 ENG2_Location =     {-11.4096, 2.0827, 6.5992};
-    constexpr VECTOR3 ENG3_Location =     {11.4354, 2.0827, 6.5992};
-    constexpr VECTOR3 ENG4_Location =     {20.0319, 2.7646, -0.9198};
     constexpr VECTOR3 CRG_door3_Location =     {2.4377, 3.5692, 16.4910};
     constexpr VECTOR3 CRG_door4_Location =     {2.4974, 3.6821, -7.5331};
     constexpr VECTOR3 CRG_door2_Location =     {-2.4116, 3.6771, -7.5225};
@@ -119,10 +104,15 @@
     constexpr VECTOR3 Rear_left_landing_gear_door2_Location =     {-0.5358, 1.8746, 1.5900};
     constexpr VECTOR3 Rear_left_wing_landing_gear_part_Location =     {-3.8527, 2.5484, 0.2806};
     constexpr VECTOR3 Rear_right_wing_landing_gear_part_Location =     {5.2733, 0.7407, 0.3515};
-    constexpr VECTOR3 ENG1_blades_Location =     {-20.1022, 2.6178, 0.9148};
-    constexpr VECTOR3 ENG2_blades_Location =     {-11.4028, 2.1021, 7.6184};
-    constexpr VECTOR3 ENG3_blades_Location =     {11.4496, 2.1014, 7.6412};
-    constexpr VECTOR3 ENG4_blades_Location =     {20.0341, 2.7799, 0.0295};
+    constexpr VECTOR3 Cockpit_offset_Location =     {0.0422, 8.4046, 22.5669};
+    constexpr VECTOR3 ENG1_Location =     {-20.1061, 2.6273, -0.9299};
+    constexpr VECTOR3 ENG1_blades_Location =     {-20.1033, 2.6415, 0.0503};
+    constexpr VECTOR3 ENG2_Location =     {-11.4136, 2.1305, 6.4770};
+    constexpr VECTOR3 ENG2_blades_Location =     {-11.4068, 2.1021, 7.5353};
+    constexpr VECTOR3 ENG3_Location =     {11.2315, 2.1305, 6.4770};
+    constexpr VECTOR3 ENG3_blades_Location =     {11.2457, 2.1021, 7.5353};
+    constexpr VECTOR3 ENG4_Location =     {19.8279, 2.7650, -0.9420};
+    constexpr VECTOR3 ENG4_blades_Location =     {19.8302, 2.7799, 0.0503};
     constexpr VECTOR3 TDP1_Location =     {0.0268, 0.0052, 20.2402};
     constexpr VECTOR3 TDP2_Location =     {-5.3242, 0.0052, -12.6606};
     constexpr VECTOR3 TDP3_Location =     {5.3449, 0.0052, -12.7062};
@@ -155,6 +145,19 @@
     constexpr VECTOR3 Axis_left_landing_gear_door2_Location =     {-1.9843, 1.9285, 1.6454};
     constexpr VECTOR3 Axis_right_landing_gear_door2_Location =     {1.9855, 1.9285, 1.6454};
     constexpr VECTOR3 Axis_landing_gear_right_door_1_Location =     {0.5872, 1.8746, 1.5900};
+    constexpr VECTOR3 RCS2_Location =     {30.0000, 5.4000, 30.0000};
+    constexpr VECTOR3 RCS1_Location =     {-30.0000, 5.4000, 30.0000};
+    constexpr VECTOR3 RCS4_Location =     {30.0000, 5.4000, -30.0000};
+    constexpr VECTOR3 RCS3_Location =     {-30.0000, 5.4000, -30.0000};
+    constexpr VECTOR3 Beacon2_right_wing_Location =     {28.6913, 5.5589, -10.0592};
+    constexpr VECTOR3 Beacon1_left_wing_Location =     {-28.7126, 5.5589, -10.0592};
+    constexpr VECTOR3 Beacon3_upper_deck_Location =     {0.0413, 9.5778, 16.5148};
+    constexpr VECTOR3 Beacon4_belly_landing_gear_Location =     {0.0413, 1.7715, 4.7940};
+    constexpr VECTOR3 Beacon5_APU_Location =     {0.0413, 6.3946, -25.5689};
+    constexpr VECTOR3 LIGHT2_Location =     {-4.0002, 3.5567, 12.3066};
+    constexpr VECTOR3 LIGHT1_Location =     {-5.0002, 3.5567, 11.4303};
+    constexpr VECTOR3 LIGHT3_Location =     {4.0000, 3.5567, 12.3066};
+    constexpr VECTOR3 LIGHT4_Location =     {4.9998, 3.5567, 11.4303};
 
 
 #endif

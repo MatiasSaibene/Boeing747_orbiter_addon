@@ -1,20 +1,26 @@
-//Copyright (c)2023 Matías Saibene
+//Copyright (c) Matías Saibene
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747SP
+//          ORBITER MODULE: Boeing 747-SOFIA
 //
-//Boeing747SP.cpp
-//Control module for Boeing 747SP vessel class
+//Boeing747SOFIA.cpp
+//Control module for Boeing 747-SOFIA vessel class
 //
 //==========================================
 
+#include <stdio.h>
+#include <string.h>
 #define ORBITER_MODULE
-#include "Boeing747SP.h"
+
+#include "Boeing747SOFIA.h"
 #include <cstring>
 #include <cstdio>
-#include <cstdint>
-#include <algorithm>
+
+bool parkingBrakeEnabled;
+bool lights_on;
+bool bGearIsDown;
+bool engines_on;
 
 // 1. vertical lift component
 
@@ -39,7 +45,7 @@ void VLiftCoeff (VESSEL *v, double aoa, double M, double Re, void *context, doub
 	}
 	double saoa = sin(aoa);
 	double pd = 0.015 + 0.4*saoa*saoa;  // profile drag
-	*cd = pd + oapiGetInducedDrag (*cl, B747SP_VLIFT_A, 0.7) + oapiGetWaveDrag (M, 0.75, 1.0, 1.1, 0.04);
+	*cd = pd + oapiGetInducedDrag (*cl, B747SOFIA_VLIFT_A, 0.7) + oapiGetWaveDrag (M, 0.75, 1.0, 1.1, 0.04);
 	// profile drag + (lift-)induced drag + transonic/supersonic wave (compressibility) drag
 }
 
@@ -59,33 +65,36 @@ void HLiftCoeff (VESSEL *v, double beta, double M, double Re, void *context, dou
 		*cl = CL[nabsc - 1];
 	}
 	*cm = 0.0;
-	*cd = 0.015 + oapiGetInducedDrag (*cl, B747SP_HLIFT_A, 0.6) + oapiGetWaveDrag (M, 0.75, 1.0, 1.1, 0.04);
+	*cd = 0.015 + oapiGetInducedDrag (*cl, B747SOFIA_HLIFT_A, 0.6) + oapiGetWaveDrag (M, 0.75, 1.0, 1.1, 0.04);
 }
 
 //Constructor
-B747SP::B747SP(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmodel){
+B747SOFIA::B747SOFIA(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmodel){
 
     landing_gear_proc = 0.0;
 
-    engines_proc = 0.0;
+    telescope_hatch_proc = 0.0;
 
-    landing_gear_status = GEAR_DOWN;
+    telescope_hatch_status = HATCH_CLOSED;
 
-    b747sp_mesh = oapiLoadMesh("Boeing_747SP");
+	landing_gear_status = GEAR_DOWN;
 
-    DefineAnimations();
+	DefineAnimations();
+
+    B747SOFIA_mesh = NULL;
+
+    mhcockpit_mesh = NULL;
+
+    engines_on = false;
 
 }
 
 //Destructor
-B747SP::~B747SP(){
-    
-    oapiDeleteMesh(b747sp_mesh);
+B747SOFIA::~B747SOFIA(){
 
-    this->VESSEL4::~VESSEL4();
 }
 
-void B747SP::DefineAnimations(void){
+void B747SOFIA::DefineAnimations(void){
     
     //Front landing gear
 
@@ -217,7 +226,7 @@ void B747SP::DefineAnimations(void){
     );
 
     AddAnimationComponent(anim_landing_gear, 0.25, 0.5, &RearLeftLandingGearDoor1);
-    AddAnimationComponent(anim_landing_gear, 0.5, 0.75, &RearLeftLandingGearDoor2);
+    AddAnimationComponent(anim_landing_gear, 0.5, 1, &RearLeftLandingGearDoor2);
 
     static unsigned int RearRightLandingGearDoor1Grp[2] = {Rear_right_landing_gear_door1_Id, Rear_right_landing_gear_door2_Id};
     static MGROUP_ROTATE RearRightLandingGearDoor1(
@@ -240,7 +249,7 @@ void B747SP::DefineAnimations(void){
     );
 
     AddAnimationComponent(anim_landing_gear, 0.25, 0.5, &RearRightLandingGearDoor1);
-    AddAnimationComponent(anim_landing_gear, 0.5, 0.75, &RearRightLandingGearDoor2);
+    AddAnimationComponent(anim_landing_gear, 0.5, 1, &RearRightLandingGearDoor2);
 
     //Engines
 
@@ -379,65 +388,130 @@ void B747SP::DefineAnimations(void){
 
     AddAnimationComponent(anim_laileron, 0, 1, &LAileron);
     AddAnimationComponent(anim_raileron, 0, 1, &RAileron);
+
+
+    //Cockpit animations
+
+    static unsigned int LYokeColumnGrp[2] = {LYoke_column_Id, LYoke_Id};
+    static MGROUP_ROTATE LYokeColumn(
+        uimesh_Cockpit,
+        LYokeColumnGrp,
+        2,
+        (Axis_LYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    static unsigned int RYokeColumnGrp[2] = {RYoke_column_Id, RYoke_Id};
+    static MGROUP_ROTATE RYokeColumn(
+        uimesh_Cockpit,
+        RYokeColumnGrp,
+        2,
+        (Axis_RYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    AddAnimationComponent(anim_elevator, 0, 1, &LYokeColumn);
+    AddAnimationComponent(anim_elevator, 0, 1, &RYokeColumn);
+
+    static unsigned int LYokeGrp[1] = {LYoke_Id};
+    static MGROUP_ROTATE LYoke(
+        uimesh_Cockpit,
+        LYokeGrp,
+        1,
+        (LYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    static unsigned int RYokeGrp[1] = {RYoke_Id};
+    static MGROUP_ROTATE RYoke(
+        uimesh_Cockpit,
+        RYokeGrp,
+        1,
+        (RYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_laileron, 0, 1, &LYoke);
+    AddAnimationComponent(anim_laileron, 0, 1, &RYoke);
+
+    static unsigned int GearLeverGrp[1] = {Landing_gear_lever_Id};
+    static MGROUP_ROTATE GearLever(
+        uimesh_Cockpit,
+        GearLeverGrp,
+        1,
+        (Axis_landing_gear_lever_Location),
+        _V(1, 0, 0),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_landing_gear, 0, 0.1, &GearLever);
+
+    //Telescope hatch
+
+    static unsigned int TelescopeHatchGrp[1] = {Telescope_hatch_Id};
+    static MGROUP_ROTATE TelescopeHatch(
+        0,
+        TelescopeHatchGrp,
+        1,
+        (Axis_telescope_Location),
+        _V(0, 0, 1),
+        (float)(-70*RAD)
+    );
+
+    anim_telescope_hatch = CreateAnimation(0.0);
+    AddAnimationComponent(anim_telescope_hatch, 0, 1, &TelescopeHatch);
+
 }
 
+void B747SOFIA::clbkSetClassCaps(FILEHANDLE cfg){
 
-// Overloaded callback functions
-// Set the capabilities of the vessel class
-void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
-
-    //Define thrusters (engines)
-    //THRUSTER_HANDLE th_main[4], th_retro[4];
-    //THGROUP_HANDLE thg_main, thg_retro;
-
-    //Add a mesh for the visual
-    AddMesh(b747sp_mesh);
-
-    //Physical vessel resources
-    SetSize(B747SP_SIZE);
-    SetEmptyMass(B747SP_EMPTYMASS);
-    SetCrossSections(B747SP_CS);
-    SetPMI(B747SP_PMI);
-    SetMaxWheelbrakeForce(25e5);
+    //Physical vessel parameters
+    SetSize(B747SOFIA_SIZE);
+    SetEmptyMass(B747SOFIA_EMPTYMASS);
+    SetCrossSections(B747SOFIA_CS);
+    SetPMI(B747SOFIA_PMI);
+    SetMaxWheelbrakeForce(89e3);
     SetRotDrag(_V(10, 10, 2.5));
-    SetNosewheelSteering(true);
 
-    //Propellant resources
-    PROPELLANT_HANDLE JET_A1 = CreatePropellantResource(B747SP_FUELMASS);
+    PROPELLANT_HANDLE JET_A1 = CreatePropellantResource(B747SOFIA_FUELMASS);
 
-    th_main[0] = CreateThruster((ENG1_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
-    th_main[1] = CreateThruster((ENG2_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
-    th_main[2] = CreateThruster((ENG3_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
-    th_main[3] = CreateThruster((ENG4_Location), _V(0, 0, 1), B747SP_MAXMAINTH, JET_A1, B747SP_ISP);
+	th_main[0] = CreateThruster((ENG1_Location), _V(0, 0, 1), B747SOFIA_MAXMAINTH, JET_A1, B747SOFIA_ISP);
+    th_main[1] = CreateThruster((ENG2_Location), _V(0, 0, 1), B747SOFIA_MAXMAINTH, JET_A1, B747SOFIA_ISP);
+    th_main[2] = CreateThruster((ENG3_Location), _V(0, 0, 1), B747SOFIA_MAXMAINTH, JET_A1, B747SOFIA_ISP);
+    th_main[3] = CreateThruster((ENG4_Location), _V(0, 0, 1), B747SOFIA_MAXMAINTH, JET_A1, B747SOFIA_ISP);
     thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
 
-    th_retro[0] = CreateThruster((ENG1_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
-    th_retro[1] = CreateThruster((ENG2_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
-    th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
-    th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747SP_MAXMAINTH/4), JET_A1, B747SP_ISP);
+    th_retro[0] = CreateThruster((ENG1_Location), _V(0, 0, -1), (B747SOFIA_MAXMAINTH/4), JET_A1, B747SOFIA_ISP);
+    th_retro[1] = CreateThruster((ENG2_Location), _V(0, 0, -1), (B747SOFIA_MAXMAINTH/4), JET_A1, B747SOFIA_ISP);
+    th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747SOFIA_MAXMAINTH/4), JET_A1, B747SOFIA_ISP);
+    th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747SOFIA_MAXMAINTH/4), JET_A1, B747SOFIA_ISP);
     thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
 
-    //Contrail effect on engines
+	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
         PARTICLESTREAMSPEC::EMISSIVE,
 		PARTICLESTREAMSPEC::LVL_PLIN, -1.0, 25.0,
 		PARTICLESTREAMSPEC::ATM_PLIN, 
     };
-    AddParticleStream(&engines_contrails, (ENG1_Location), _V(0, 0, -1), &lvlcontrailengines);
+	AddParticleStream(&engines_contrails, (ENG1_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG2_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG3_Location), _V(0, 0, -1), &lvlcontrailengines);
     AddParticleStream(&engines_contrails, (ENG4_Location), _V(0, 0, -1), &lvlcontrailengines);
 
-    lwing = CreateAirfoil3(LIFT_VERTICAL, (Left_wing_Location), VLiftCoeff, 0, B747SP_VLIFT_C, (B747SP_VLIFT_S*4), B747SP_VLIFT_A);
+	lwing = CreateAirfoil3(LIFT_VERTICAL, (Left_wing_Location), VLiftCoeff, 0, B747SOFIA_VLIFT_C, (B747SOFIA_VLIFT_S*4), B747SOFIA_VLIFT_A);
 
-    rwing = CreateAirfoil3(LIFT_VERTICAL,(Right_wing_Location), VLiftCoeff, 0, B747SP_VLIFT_C,(B747SP_VLIFT_S*4), B747SP_VLIFT_A);
+    rwing = CreateAirfoil3(LIFT_VERTICAL,(Right_wing_Location), VLiftCoeff, 0, B747SOFIA_VLIFT_C,(B747SOFIA_VLIFT_S*4), B747SOFIA_VLIFT_A);
 
-    lstabilizer = CreateAirfoil3(LIFT_VERTICAL, (Left_stabilizer_Location), VLiftCoeff, 0, B747SP_STAB_C, B747SP_STAB_S, B747SP_STAB_A);
+    lstabilizer = CreateAirfoil3(LIFT_VERTICAL, (Left_stabilizer_Location), VLiftCoeff, 0, B747SOFIA_STAB_C, B747SOFIA_STAB_S, B747SOFIA_STAB_A);
 
-    rstabilizer = CreateAirfoil3(LIFT_VERTICAL, (Right_stabilizer_Location), VLiftCoeff, 0, B747SP_STAB_C, B747SP_STAB_S, B747SP_STAB_A);
+    rstabilizer = CreateAirfoil3(LIFT_VERTICAL, (Right_stabilizer_Location), VLiftCoeff, 0, B747SOFIA_STAB_C, B747SOFIA_STAB_S, B747SOFIA_STAB_A);
     
-    CreateAirfoil3(LIFT_HORIZONTAL, (Rudder_Location), HLiftCoeff, 0, B747SP_HLIFT_C, B747SP_HLIFT_S, B747SP_HLIFT_A);
+    CreateAirfoil3(LIFT_HORIZONTAL, (Rudder_Location), HLiftCoeff, 0, B747SOFIA_HLIFT_C, B747SOFIA_HLIFT_S, B747SOFIA_HLIFT_A);
 
     hlaileron = CreateControlSurface3(AIRCTRL_AILERON,8.3696, 1.7, (LAileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_raileron);
     hraileron = CreateControlSurface3(AIRCTRL_AILERON, 8.3696, 1.7, (Raileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_laileron);
@@ -450,39 +524,286 @@ void B747SP::clbkSetClassCaps(FILEHANDLE cfg){
 
     CreateControlSurface3(AIRCTRL_RUDDER, 20.6937, 1.7, (Rudder_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_rudder);
 
+    //Add the mesh
+    SetMeshVisibilityMode (AddMesh (B747SOFIA_mesh = oapiLoadMeshGlobal ("Boeing747\\Boeing_747SOFIA")), MESHVIS_EXTERNAL);
+    //AddMesh(B747SOFIA_mesh);
+
+    //Add the mesh for the cockpit
+    SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
+
+    //Define beacons
+
+    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
+    static VECTOR3 beaconcol = {0, 1, 0};
+
+    for(int i = 0; i < 5; i++){
+		beacon[i].shape = BEACONSHAPE_STAR;
+		beacon[i].pos = beaconpos+i;
+		beacon[i].col = &beaconcol;
+		beacon[i].size = 1;
+		beacon[i].falloff = 0.4;
+		beacon[i].period = 1;
+		beacon[i].duration = 0.1;
+		beacon[i].tofs = 0.2;
+		beacon[i].active = false;
+		AddBeacon(beacon+i);
+	}
+
+}
+
+void B747SOFIA::ParkingBrake(){
+
+    if(!parkingBrakeEnabled){
+        SetWheelbrakeLevel(1, 0, true);
+        parkingBrakeEnabled = true;
+    } else {
+        SetWheelbrakeLevel(0, 0, true);
+        parkingBrakeEnabled = false;
+    }
+
+}
+
+
+void B747SOFIA::ActivateBeacons(){
+
+    for(int i = 0; i < 5; i++){
+		if(!beacon[i].active){
+				beacon[i].active = true;
+		} else {
+				beacon[i].active = false;
+		}
+	}
+}
+
+void B747SOFIA::LightsControl(void){
+
+    if(!lights_on){
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+
+        cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
+        cpl2 = AddPointLight((PL2_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
+        cpl2->SetVisibility(LightEmitter::VIS_COCKPIT);
+
+        lights_on = true;
+    } else {
+        DelLightEmitter(l1);
+        DelLightEmitter(l2);
+        DelLightEmitter(l3);
+        DelLightEmitter(l4);
+
+        DelLightEmitter(cpl1);
+        DelLightEmitter(cpl2);
+
+        lights_on = false;
+    }
+}
+
+void B747SOFIA::EnginesAutostart(void){
+
+    engines_on = true;
+    m_pXRSound->PlayWav(engines_start);
+    
+}
+
+void B747SOFIA::EnginesAutostop(void){
+
+    engines_on = false;
+    m_pXRSound->PlayWav(engines_shutdown);
+    
+}
+
+void B747SOFIA::UpdateEnginesStatus(){
+
+    if(engines_on == true){
+        thg_main = CreateThrusterGroup(th_main, 4, THGROUP_MAIN);
+
+        thg_retro = CreateThrusterGroup(th_retro, 4, THGROUP_RETRO);
+
+        pwr = GetThrusterLevel(thg_main);
+
+    } else if (engines_on == false){
+        DelThrusterGroup(thg_main);
+        DelThrusterGroup(thg_retro);
+        pwr = 0;
+    }
+}
+
+bool B747SOFIA::clbkLoadVC(int id){
+
+    switch(id){
+        case 0 : //Commander
+            SetCameraOffset(Captains_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(-1, 1, -1, 2);
+        break;
+
+        case 1 : //First officer
+            SetCameraOffset(First_officer_camera_Location);
+            SetCameraDefaultDirection(_V(0, 0, 1));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(0, -1, -1, 2);
+        break;
+
+        case 2: //Engineer
+            SetCameraOffset(Engineer_camera_Location);
+            SetCameraDefaultDirection(_V(1, 0, 0));
+            SetCameraRotationRange(RAD*120, RAD*120, RAD*60, RAD*60);
+            oapiVCSetNeighbours(1, -1, -1, 3);
+        break;
+    }
+
+    return true; 
+
+}
+
+
+int B747SOFIA::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate){
+
+    if(key == OAPI_KEY_G && down){
+        SetGearDown();
+        return 1;
+    }
+    if(key == OAPI_KEY_NUMPADENTER && down){
+        ParkingBrake();
+        return 1;
+    }
+    if(key == OAPI_KEY_B && down){
+        ActivateBeacons();
+        return 1;
+    }
+    if(key == OAPI_KEY_F && down){
+        LightsControl();
+        return 1;
+    }
+    if(key == OAPI_KEY_D && down){
+        OpenTelescopeHatch();
+        return 1;
+    }
+    if(down){
+        if(KEYMOD_CONTROL(kstate)){
+            switch(key){
+                case OAPI_KEY_A:
+                EnginesAutostart();
+                return 1;
+
+                case OAPI_KEY_E:
+                EnginesAutostop();
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+//Load vessel status from scenario file
+void B747SOFIA::clbkLoadStateEx(FILEHANDLE scn, void *vs){
+    
+    char *line;
+
+    while(oapiReadScenario_nextline(scn, line)){
+        if(!_strnicmp(line, "GEAR", 4)){
+            sscanf_s(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
+            SetAnimation(anim_landing_gear, landing_gear_proc);
+            if (landing_gear_proc == 1.0){
+                bGearIsDown = true;
+            } else {
+                bGearIsDown = false;
+            }
+        } else if (!_strnicmp(line+9, "TELESCOPE", 9)){
+            sscanf_s(line+4, "%d%lf", (int *)&telescope_hatch_status, &telescope_hatch_proc);
+            SetAnimation(anim_telescope_hatch, telescope_hatch_proc);
+        }else{
+            ParseScenarioLineEx(line, vs);
+        }
+    }
+}
+
+void B747SOFIA::clbkSaveState(FILEHANDLE scn){
+
+    char cbuf[256];
+
+    SaveDefaultState(scn);
+
+    sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
+    oapiWriteScenario_string(scn, "GEAR", cbuf);
+
+    sprintf(cbuf, "%d %0.4f", telescope_hatch_status, telescope_hatch_proc);
+    oapiWriteScenario_string(scn, "TELESCOPE", cbuf);
+
+
 }
 
 //////////Logic for animations
-void B747SP::SetGearDown(void){
+void B747SOFIA::SetGearDown(void){
     ActivateLandingGear((landing_gear_status == GEAR_DOWN || landing_gear_status == GEAR_DEPLOYING) ?
         GEAR_STOWING : GEAR_DEPLOYING);
 }
 
-void B747SP::ActivateLandingGear(LandingGearStatus action){
+void B747SOFIA::ActivateLandingGear(LandingGearStatus action){
     landing_gear_status = action;
 }
 
-void B747SP::UpdateLandingGearAnimation(double simdt) {
+void B747SOFIA::UpdateLandingGearAnimation(double simdt) {
     if (landing_gear_status >= GEAR_DEPLOYING) {
         double da = simdt * LANDING_GEAR_OPERATING_SPEED;
         if (landing_gear_status == GEAR_DEPLOYING) {
             if (landing_gear_proc > 0.0) landing_gear_proc = max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+            bGearIsDown = true;
         } else {
             if (landing_gear_proc < 1.0) landing_gear_proc = min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+            bGearIsDown = true;
         }
         SetAnimation(anim_landing_gear, landing_gear_proc);
     }
 }
 
-double B747SP::UpdateLvlEnginesContrail(){
+void B747SOFIA::UpdateGearStatus(void){
+    if(!bGearIsDown){
+        SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+        SetNosewheelSteering(true);
+    } else if (bGearIsDown){
+        SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+        SetNosewheelSteering(false);
+    }
+}
+
+void B747SOFIA::OpenTelescopeHatch(void){
+    ActivateTelescopeHatch((telescope_hatch_status == HATCH_CLOSED || telescope_hatch_status == HATCH_OPENING) ?
+        HATCH_CLOSING : HATCH_OPENING);
+}
+
+void B747SOFIA::ActivateTelescopeHatch(TelescopeHatchStatus action){
+    telescope_hatch_status = action;
+}
+
+void B747SOFIA::UpdateTelescopeHatchAnimation(double simdt) {
+    if (telescope_hatch_status >= HATCH_OPENING) {
+        double da = simdt * LANDING_GEAR_OPERATING_SPEED;
+        if (telescope_hatch_status == HATCH_OPENING) {
+            if (telescope_hatch_proc > 0.0) telescope_hatch_proc = max(0.0, telescope_hatch_proc - da);
+            else telescope_hatch_status = HATCH_CLOSED;
+        } else {
+            if (telescope_hatch_proc < 1.0) telescope_hatch_proc = min(1.0, telescope_hatch_proc + da);
+            else telescope_hatch_status = HATCH_OPEN;
+        }
+        SetAnimation(anim_telescope_hatch, telescope_hatch_proc);
+    }
+}
+
+double B747SOFIA::UpdateLvlEnginesContrail(){
     double machnumber = GetMachNumber();
     double altitude = GetAltitude();
 
-    if((machnumber > 0.5) && (altitude > 10000)){
+    if((machnumber > 0.5) && ((altitude > 10000) && (altitude < 15000))){
         return 1.0;
     } else {
         return 0.0;
@@ -490,12 +811,34 @@ double B747SP::UpdateLvlEnginesContrail(){
 
 }
 
-void B747SP::clbkPostStep(double simt, double simdt, double mjd){
+void B747SOFIA::clbkPostStep(double simt, double simdt, double mjd){
     UpdateLandingGearAnimation(simdt);
+    UpdateTelescopeHatchAnimation(simdt);
     lvlcontrailengines = UpdateLvlEnginesContrail();
+    UpdateEnginesStatus();
 }
 
-void B747SP::clbkPreStep(double simt, double simdt, double mjd){
+void B747SOFIA::clbkPostCreation(){
+
+    UpdateGearStatus();
+
+    m_pXRSound = XRSound::CreateInstance(this);
+
+    m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+
+    m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
+
+}
+
+void B747SOFIA::clbkPreStep(double simt, double simdt, double mjd){
 
     double grndspd = GetGroundspeed();
     double pwr = GetThrusterLevel(th_main);
@@ -512,43 +855,10 @@ void B747SP::clbkPreStep(double simt, double simdt, double mjd){
     }
 }
 
-
-
-///////////Logic for keys pressed, etc.
-
-int B747SP::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate){
-
-    if(key == OAPI_KEY_G && down){
-        SetGearDown();
-        return 1;
-    }
-    return 0;
-}
-
-//Load landing gear status from scenario file
-void B747SP::clbkLoadStateEx(FILEHANDLE scn, void *vs){
-
-    char *line;
-
-    while(oapiReadScenario_nextline(scn, line)){
-        if(!_strnicmp(line, "GEAR", 4)){
-            sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
-            SetAnimation(anim_landing_gear, landing_gear_proc);
-        }
-    }
-}
-
-void B747SP::clbkSaveState(FILEHANDLE scn){
-
-    char cbuf[256];
-
-    SaveDefaultState(scn);
-    sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
-    oapiWriteScenario_string(scn, "GEAR", cbuf);
-
-}
+////////////////////////
 
 DLLCLBK void InitModule(HINSTANCE hModule){
+
 
 }
 
@@ -562,13 +872,13 @@ DLLCLBK void ExitModule(HINSTANCE *hModule){
 
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel){
     
-    return new B747SP(hvessel, flightmodel);
+	return new B747SOFIA(hvessel, flightmodel);
 
 }
 
 /////////////Vessel memory cleanup
 DLLCLBK void ovcExit(VESSEL *vessel){
     
-    if(vessel) delete(B747SP*)vessel;
-
+	if(vessel) delete(B747SOFIA*)vessel;
+	
 }
