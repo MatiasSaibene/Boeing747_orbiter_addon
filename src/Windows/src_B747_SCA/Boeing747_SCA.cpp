@@ -124,7 +124,7 @@ void B747SCA::DefineAnimations(void){
 
     anim_landing_gear = CreateAnimation(0.0);
 
-    AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRotate);
+    AddAnimationComponent(anim_landing_gear, 0, 0.25, &FrontLandingGearRotate);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearLeftDoor);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRightDoor);
 
