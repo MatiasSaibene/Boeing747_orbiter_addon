@@ -9,6 +9,7 @@
 //
 //==========================================
 
+#include <strings.h>
 #define ORBITER_MODULE
 #include "Boeing747_8.h"
 #include <cstring>
@@ -18,7 +19,8 @@
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
-bool engines_on = false;
+bool bGearIsDown;
+bool engines_on;
 
 
 // 1. vertical lift component
@@ -82,6 +84,8 @@ B7478::B7478(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmodel)
 
     fccabin_mesh = NULL;
 
+    engines_on = false;
+
     skinpath[0] = '\0';
     for (int i = 0; i < 5; i++)
         skin[i] = 0;
@@ -129,7 +133,7 @@ void B7478::DefineAnimations(void){
 
     anim_landing_gear = CreateAnimation(0.0);
 
-    AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRotate);
+    AddAnimationComponent(anim_landing_gear, 0, 0.25, &FrontLandingGearRotate);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearLeftDoor);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRightDoor);
 
@@ -642,8 +646,7 @@ void B7478::NextSkin() {
 }
 
 void B7478::ChangeLivery() {
-    const char item[5] = "SKIN";
-    char skinname[256];
+    
     char completedir_fus[256];
     char completedir_vs[256];
     char completedir_rw[256];
@@ -822,6 +825,7 @@ void B7478::UpdateEnginesStatus(){
     }
 }
 
+
 bool B7478::clbkLoadVC(int id){
 
     switch(id){
@@ -891,88 +895,10 @@ bool B7478::clbkLoadVC(int id){
         break;
     }
 
-
-    //MFDs setup
-
-    /* static VCMFDSPEC mfds1 = {1, 20};
-    oapiVCRegisterMFD(MFD_LEFT, &mfds1);
-    
-    for(int index = 0; index < 12; ++index){
-		oapiVCRegisterArea((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_LBUP, PANEL_MAP_NONE, NULL);
-		oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), MFD_BUTTON_POS[index], .02);
-	}
-
-    for(int index = 0; index < 3; ++index){
-        oapiVCRegisterArea((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER,PANEL_MOUSE_LBDOWN, PANEL_MAP_NONE, NULL);
-        oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), MFD_CTRL_POS[index], .02);
-    }
-
-    vcMfdTex = oapiGetTextureHandle(mhcockpit_mesh, TEX_MFDKEYS);
-	oapiVCRegisterArea(VC_AREA_MFDKEYS, _R(0, 0, 512, 512), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE, PANEL_MAP_BACKGROUND, vcMfdTex);
-*/
     return true; 
 
 }
 
-/* void B747SP::clbkMFDMode(int mfd, int mode){
-	oapiVCTriggerRedrawArea(-1, VC_AREA_MFDKEYS);
-} */
-
-/* bool B747SP::clbkVCRedrawEvent(int id, int ev, SURFHANDLE surf)
-{
-	oapi::Sketchpad* sp;
-	static const int mfdUpdateLineup[1] = { MFD_LEFT };
-
-	switch (id)
-	{
-	case VC_AREA_MFDKEYS:
-	{
-		sp = oapiGetSketchpad(surf);
-
-		if (!sp) return false;
-
-		sp->SetFont(drawRes.mfdLabelsFont);
-		sp->SetTextColor(0xFFCC00);
-		sp->SetTextAlign(oapi::Sketchpad::CENTER, oapi::Sketchpad::BASELINE);
-
-		int x = 0;
-
-		for (UINT i = 0; i < 4; ++i)
-		{
-			for (UINT j = 0; j < 6; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + (j * 50), label, strlen(label));
-			}
-
-			x += 50;
-
-			for (UINT j = 6; j < 12; ++j)
-			{
-				const char* label = oapiMFDButtonLabel(mfdUpdateLineup[i], j);
-
-				if (!label) continue;
-
-				sp->Text(25 + x, 32 + ((j - 6) * 50), label, strlen(label));
-			}
-
-			x += 50;
-		}
-
-		x = 0;
-		int y = 300;
-
-		oapiReleaseSketchpad(sp);
-
-		return true;
-	    }	
-	}
-
-	return false;
-} */
 
 int B7478::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 
@@ -1016,11 +942,18 @@ int B7478::clbkConsumeBufferedKey(int key, bool down, char *kstate){
 void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
     
     char *line;
+    char engBoolvalue[3];
+    char ON[2];
 
     while(oapiReadScenario_nextline(scn, line)){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+            if (landing_gear_proc == 1.0){
+                bGearIsDown = true;
+            } else {
+                bGearIsDown = false;
+            }
         } else if(!strncasecmp(line, "SKIN", 4)){
             sscanf(line+4, "%s", skinpath);
             char fname[256];
@@ -1038,6 +971,13 @@ void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "Left_wing.dds"); skin[4] = oapiLoadTexture(fname);
 
+        } else if(!strncasecmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%s", engBoolvalue);
+            if(strcmp(engBoolvalue, ON) != 0){
+                engines_on = false;
+            } else {
+                engines_on = true;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -1052,8 +992,14 @@ void B7478::clbkSaveState(FILEHANDLE scn){
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
-    if (skinpath[0])
-		oapiWriteScenario_string (scn, "SKIN", skinpath);
+    oapiWriteScenario_string (scn, "SKIN", skinname);
+
+    if(!engines_on){
+        oapiWriteScenario_string(scn, "ENGINES", "OFF");
+    } else {
+        oapiWriteScenario_string(scn, "ENGINES", "ON");
+    }
+
 }
 
 //////////Logic for animations
@@ -1074,12 +1020,24 @@ void B7478::UpdateLandingGearAnimation(double simdt) {
             if (landing_gear_proc > 0.0) landing_gear_proc = std::max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+            bGearIsDown = true;
         } else {
             if (landing_gear_proc < 1.0) landing_gear_proc = std::min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+            bGearIsDown = false;
         }
         SetAnimation(anim_landing_gear, landing_gear_proc);
+    }
+}
+
+void B7478::UpdateGearStatus(void){
+    if(!bGearIsDown){
+        SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+        SetNosewheelSteering(true);
+    } else if (bGearIsDown){
+        SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+        SetNosewheelSteering(false);
     }
 }
 
@@ -1105,17 +1063,23 @@ void B7478::clbkPostStep(double simt, double simdt, double mjd){
 
 void B7478::clbkPostCreation(){
 
+    UpdateGearStatus();
+
     m_pXRSound = XRSound::CreateInstance(this);
 
     m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
 
-    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
 
-    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav");
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav");
 
     m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
 

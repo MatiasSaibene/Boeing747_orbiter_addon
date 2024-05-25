@@ -9,15 +9,16 @@
 //
 //==========================================
 
-#include <strings.h>
+
 #define ORBITER_MODULE
+#include <strings.h>
 #include "Boeing747_AAC.h"
 #include <cstring>
 #include <cstdio>
 
 bool parkingBrakeEnabled;
 bool lights_on;
-
+bool bGearIsDown;
 bool engines_on;
 
 
@@ -129,7 +130,7 @@ void B747AAC::DefineAnimations(void){
 
     anim_landing_gear = CreateAnimation(0.0);
 
-    AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRotate);
+    AddAnimationComponent(anim_landing_gear, 0, 0.25, &FrontLandingGearRotate);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearLeftDoor);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRightDoor);
 
@@ -749,6 +750,11 @@ void B747AAC::clbkLoadStateEx(FILEHANDLE scn, void *vs){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+            if (landing_gear_proc == 1.0){
+                bGearIsDown = true;
+            } else {
+                bGearIsDown = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -783,12 +789,24 @@ void B747AAC::UpdateLandingGearAnimation(double simdt) {
             if (landing_gear_proc > 0.0) landing_gear_proc = std::max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+            bGearIsDown = true;
         } else {
             if (landing_gear_proc < 1.0) landing_gear_proc = std::min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+            bGearIsDown = false;
         }
         SetAnimation(anim_landing_gear, landing_gear_proc);
+    }
+}
+
+void B747AAC::UpdateGearStatus(void){
+    if(!bGearIsDown){
+        SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+        SetNosewheelSteering(true);
+    } else if (bGearIsDown){
+        SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+        SetNosewheelSteering(false);
     }
 }
 
@@ -836,6 +854,8 @@ void B747AAC::clbkPostStep(double simt, double simdt, double mjd){
 }
 
 void B747AAC::clbkPostCreation(){
+
+    UpdateGearStatus();
 
     m_pXRSound = XRSound::CreateInstance(this);
 

@@ -1,51 +1,55 @@
-#ifndef __Boeing747SCA_H
-#define __Boeing747SCA_H
+#pragma once
+
+#ifndef __BOEING747LCF_H
+#define __BOEING747LCF_H
 
 #define STRICT 1
 #include <cstdint>
 #include "OrbiterAPI.h"
 #include "Orbitersdk.h"
 #include "VesselAPI.h"
-#include "747SCAdefinitions.h"
+#include "747LCFdefinitions.h"
 #include "747cockpitdefinitions.h"
 #include "XRSound.h"
 
 //Vessel parameters
-const double B747SCA_SIZE = 22.8; //Mean radius in meters.
+const double B747LCF_SIZE = 25; //Mean radius in meters.
 
-const double B747SCA_EMPTYMASS = 171840; //Empty mass in kg.
+const double B747LCF_EMPTYMASS = 183523; //Empty mass in kg.
 
-const double B747SCA_FUELMASS = 168260; //Fuel mass in kg.
+const double B747LCF_FUELMASS = 213370; //Fuel mass in kg.
 
-const double B747SCA_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747LCF_ISP = 2e4; //Fuel-specific impulse in m/s.
 
-const double B747SCA_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747LCF_MAXMAINTH = 500e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
 const double ENGINE_ROTATION_SPEED = 25;
 
-const VECTOR3 B747SCA_CS = {496.48, 953.27, 135.78}; //Vessel's cross sections.
+const VECTOR3 B747LCF_CS = {491.82, 959.88, 132.38}; //Vessel's cross sections.
 
-const VECTOR3 B747SCA_PMI = {363.91, 396.64, 128.02}; //Principal moments of inertia.
+const VECTOR3 B747LCF_PMI = {303.08, 338.21, 131.21}; //Principal moments of inertia.
 
-const double B747SCA_VLIFT_C = 7.65; //Chord lenght in meters;
+const double B747LCF_VLIFT_C = 7.65; //Chord lenght in meters;
 
-const double B747SCA_VLIFT_S = 511; //Wing area in m^2;
+const double B747LCF_VLIFT_S = 511; //Wing area in m^2;
 
-const double B747SCA_VLIFT_A = 7.0; //Wing aspect ratio;
+const double B747LCF_VLIFT_A = 7.0; //Wing aspect ratio;
 
-const double B747SCA_HLIFT_C = 8.2; //Chord lenght in meters;
+const double B747LCF_HLIFT_C = 8.2; //Chord lenght in meters;
 
-const double B747SCA_HLIFT_S = 61.4473; //Wing area in m^2;
+const double B747LCF_HLIFT_S = 61.4473; //Wing area in m^2;
 
-const double B747SCA_HLIFT_A = 6.1156; //Wing aspect ratio;
+const double B747LCF_HLIFT_A = 6.1156; //Wing aspect ratio;
 
-const double B747SCA_STAB_C = 3.59; //Stabilizer chord lenght in meters.
+const double B747LCF_STAB_C = 3.59; //Stabilizer chord lenght in meters.
 
-const double B747SCA_STAB_S = 39.0753; //Stabilizer wing area in m^2.
+const double B747LCF_STAB_S = 39.0753; //Stabilizer wing area in m^2.
 
-const double B747SCA_STAB_A = 2; //Stabilizer wing aspect ratio.
+const double B747LCF_STAB_A = 2; //Stabilizer wing aspect ratio.
+
+const VECTOR3 B747LCF_COCKPIT_OFFSET = Cockpit_offset_Location;
 
 //Define touchdown points
 //For gear down
@@ -84,24 +88,25 @@ static TOUCHDOWNVTX tdvtx_gearup[ntdvtx_gearup] = {
     {(TDP14_Location), 5e6, 5e6, 3.0},
 };
 
-//B747SCA class interface
+//B747LCF class interface
 
-class B747SCA : public VESSEL4{
+class B747LCF : public VESSEL4{
 
     public:
 
         enum MySounds {engines_start, engines_shutdown, engines, cabin_ambiance, rotate, gear_movement};
-
+        
         enum LandingGearStatus{GEAR_DOWN, GEAR_UP, GEAR_DEPLOYING, GEAR_STOWING} landing_gear_status;
 
-        B747SCA(OBJHANDLE hVessel, int flightmodel);
-        virtual ~B747SCA();
+        B747LCF(OBJHANDLE hVessel, int flightmodel);
+        virtual ~B747LCF();
 
         void DefineAnimations(void);
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
         void UpdateGearStatus(void);
+
 
         double UpdateLvlEnginesContrail();
 
@@ -125,7 +130,8 @@ class B747SCA : public VESSEL4{
 
         bool clbkLoadVC(int) override;
 
-        MESHHANDLE b747sca_mesh, mhcockpit_mesh;
+
+        MESHHANDLE B747LCF_mesh, mhcockpit_mesh;  //Mesh handle
         unsigned int uimesh_Cockpit = 1;
 
         XRSound *m_pXRSound;
@@ -151,8 +157,8 @@ class B747SCA : public VESSEL4{
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
         BEACONLIGHTSPEC beacon[5];
-        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
-
+        LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2;
+        
 
         COLOUR4 col_d = {0.9,0.8,1,0};
 	    COLOUR4 col_s = {1.9,0.8,1,0};
@@ -165,4 +171,4 @@ class B747SCA : public VESSEL4{
         COLOUR4 fccol_a = {1, 1, 1};
 };
 
-#endif //!__B747SCA_H
+#endif //!__BOEING747400_H

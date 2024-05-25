@@ -18,6 +18,7 @@
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
+bool bGearIsDown;
 bool engines_on;
 
 
@@ -133,7 +134,7 @@ void B747100::DefineAnimations(void){
 
     anim_landing_gear = CreateAnimation(0.0);
 
-    AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRotate);
+    AddAnimationComponent(anim_landing_gear, 0, 0.25, &FrontLandingGearRotate);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearLeftDoor);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRightDoor);
 
@@ -509,7 +510,6 @@ void B747100::NextSkin() {
 }
 
 void B747100::ChangeLivery() {
-    const char item[5] = "SKIN";
     
     char completedir_fus[256];
     char completedir_vs[256];
@@ -547,7 +547,6 @@ void B747100::ChangeLivery() {
     skin[2] = oapiLoadTexture(completedir_rw);
     skin[3] = oapiLoadTexture(completedir_lw);
     skin[4] = oapiLoadTexture(completedir_eng);
-
 
     ApplyLivery();
 }
@@ -806,6 +805,11 @@ void B747100::clbkLoadStateEx(FILEHANDLE scn, void *vs){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+            if (landing_gear_proc == 1.0){
+                bGearIsDown = true;
+            } else {
+                bGearIsDown = false;
+            }
         } else if(!strncasecmp(line, "SKIN", 4)){
             sscanf(line+4, "%s", skinname);
             char fname[256];
@@ -857,12 +861,24 @@ void B747100::UpdateLandingGearAnimation(double simdt) {
             if (landing_gear_proc > 0.0) landing_gear_proc = std::max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+            bGearIsDown = true;
         } else {
             if (landing_gear_proc < 1.0) landing_gear_proc = std::min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+            bGearIsDown = false;
         }
         SetAnimation(anim_landing_gear, landing_gear_proc);
+    }
+}
+
+void B747100::UpdateGearStatus(void){
+    if(!bGearIsDown){
+        SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+        SetNosewheelSteering(true);
+    } else if (bGearIsDown){
+        SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+        SetNosewheelSteering(false);
     }
 }
 
@@ -886,17 +902,23 @@ void B747100::clbkPostStep(double simt, double simdt, double mjd){
 
 void B747100::clbkPostCreation(){
 
+    UpdateGearStatus();
+
     m_pXRSound = XRSound::CreateInstance(this);
 
     m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
 
-    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
 
-    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav");
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav");
 
     m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
 

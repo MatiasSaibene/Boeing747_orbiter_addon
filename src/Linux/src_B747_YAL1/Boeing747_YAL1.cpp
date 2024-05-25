@@ -18,7 +18,8 @@
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
-bool engines_on = false;
+bool bGearIsDown;
+bool engines_on;
 
 
 // 1. vertical lift component
@@ -74,6 +75,8 @@ B747YAL1::B747YAL1(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flight
 
 	landing_gear_status = GEAR_DOWN;
 
+    engines_on = false;
+
 	DefineAnimations();
 
     b747yal1_mesh = NULL;
@@ -124,7 +127,7 @@ void B747YAL1::DefineAnimations(void){
 
     anim_landing_gear = CreateAnimation(0.0);
 
-    AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRotate);
+    AddAnimationComponent(anim_landing_gear, 0, 0.25, &FrontLandingGearRotate);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearLeftDoor);
     AddAnimationComponent(anim_landing_gear, 0, 0.5, &FrontLandingGearRightDoor);
 
@@ -470,82 +473,6 @@ void B747YAL1::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747YAL1_MAXMAINTH/4), JET_A1, B747YAL1_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747YAL1_MAXMAINTH/4), JET_A1, B747YAL1_ISP);
 
-    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
-    THRUSTER_HANDLE th_rcs[24], th_group[4];
-        
-        //RCS1
-    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS2
-    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS3
-    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS4
-    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-    //Define RCS groups
-    th_group[0] = th_rcs[3];
-    th_group[1] = th_rcs[9];
-    th_group[2] = th_rcs[15];
-    th_group[3] = th_rcs[21];
-    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
-
-    th_group[0] = th_rcs[0];
-	th_group[1] = th_rcs[6];
-	th_group[2] = th_rcs[12];
-	th_group[3] = th_rcs[18];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
-
-	th_group[0] = th_rcs[10];
-	th_group[1] = th_rcs[22];
-	th_group[2] = th_rcs[1];
-	th_group[3] = th_rcs[13];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
-
-	th_group[0] = th_rcs[4];
-	th_group[1] = th_rcs[16];
-    th_group[2] = th_rcs[7];
-	th_group[3] = th_rcs[19];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
-
-	th_group[0] = th_rcs[6];
-	th_group[1] = th_rcs[15];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
-
-	th_group[0] = th_rcs[3];
-	th_group[1] = th_rcs[18];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
- */
-
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
@@ -585,9 +512,6 @@ void B747YAL1::clbkSetClassCaps(FILEHANDLE cfg){
 
     //Add the mesh for the cockpit
     SetMeshVisibilityMode(AddMesh(mhcockpit_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_cockpit")), MESHVIS_VC);
-
-    //Add the mesh for the First Class cabin
-    SetMeshVisibilityMode(AddMesh(fccabin_mesh = oapiLoadMeshGlobal("Boeing747\\Boeing_747_first_class")), MESHVIS_VC);
 
     //Define beacons
 
@@ -844,6 +768,11 @@ void B747YAL1::clbkLoadStateEx(FILEHANDLE scn, void *vs){
         if(!strncasecmp(line, "GEAR", 4)){
             sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
+            if (landing_gear_proc == 1.0){
+                bGearIsDown = true;
+            } else {
+                bGearIsDown = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -878,12 +807,24 @@ void B747YAL1::UpdateLandingGearAnimation(double simdt) {
             if (landing_gear_proc > 0.0) landing_gear_proc = std::max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+            bGearIsDown = true;
         } else {
             if (landing_gear_proc < 1.0) landing_gear_proc = std::min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+            bGearIsDown = false;
         }
         SetAnimation(anim_landing_gear, landing_gear_proc);
+    }
+}
+
+void B747YAL1::UpdateGearStatus(void){
+    if(!bGearIsDown){
+        SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+        SetNosewheelSteering(true);
+    } else if (bGearIsDown){
+        SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
+        SetNosewheelSteering(false);
     }
 }
 
@@ -909,17 +850,23 @@ void B747YAL1::clbkPostStep(double simt, double simdt, double mjd){
 
 void B747YAL1::clbkPostCreation(){
 
+    UpdateGearStatus();
+
     m_pXRSound = XRSound::CreateInstance(this);
 
     m_pXRSound->LoadWav(engines_start, "XRSound\\Boeing747\\747_APU_Start.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
 
-    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
 
-    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav");
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav");
 
     m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
 
