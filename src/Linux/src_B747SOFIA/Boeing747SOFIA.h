@@ -20,9 +20,9 @@ const double B747SOFIA_EMPTYMASS = 147540; //Empty mass in kg.
 
 const double B747SOFIA_FUELMASS = 190630; //Fuel mass in kg.
 
-const double B747SOFIA_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747SOFIA_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747SOFIA_MAXMAINTH = 500e3; //Max main thrust in kN.
+const double B747SOFIA_MAXMAINTH = 400e3; //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -130,6 +130,7 @@ class B747SOFIA : public VESSEL4{
 
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
+        void UpdateGearStatus(void);
 
         void UpdateLandingGearAnimation(double);
         void ActivateTelescopeHatch(TelescopeHatchStatus telescope_hatch_status);

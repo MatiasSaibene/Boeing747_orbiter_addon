@@ -21,11 +21,11 @@ const double B747ST_FUELMASS = 168260; //Fuel mass in kg.
 
 const double B747ST_WATERMASS = 74200; //Water mass in kg.
 
-const double B747ST_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747ST_ISP = 32373; //Fuel-specific impulse in m/s.
 
 const double B747ST_WISP = 0.0625; //Specific impulse of water?. We are using this and WATERMASS to make a animation of water being discharged.
 
-const double B747ST_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747ST_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double B747ST_MAXWATERTH = 100; //?
 
@@ -111,6 +111,7 @@ class B747ST : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
 
         double UpdateLvlEnginesContrail();
 

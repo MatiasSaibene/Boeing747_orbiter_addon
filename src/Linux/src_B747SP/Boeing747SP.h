@@ -20,11 +20,9 @@ const double B747SP_EMPTYMASS = 147540; //Empty mass in kg.
 
 const double B747SP_FUELMASS = 190630; //Fuel mass in kg.
 
-const double B747SP_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747SP_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747SP_MAXMAINTH = 500e3; //Max main thrust in kN.
-
-//const double B747SP_MAXRCSTH = 58.0e3;
+const double B747SP_MAXMAINTH = 400e3; //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -125,6 +123,8 @@ class B747SP : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
+
 
         double UpdateLvlEnginesContrail();
 
@@ -204,6 +204,7 @@ class B747SP : public VESSEL4{
         const char fname[17] = "B747SP_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[25] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
         char skinname[256];
+        
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

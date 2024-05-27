@@ -20,9 +20,9 @@ const double B747100_EMPTYMASS = 171840; //Empty mass in kg.
 
 const double B747100_FUELMASS = 168260; //Fuel mass in kg.
 
-const double B747100_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747100_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747100_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747100_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -106,6 +106,8 @@ class B747100 : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
+
 
         double UpdateLvlEnginesContrail();
 
@@ -181,7 +183,7 @@ class B747100 : public VESSEL4{
         COLOUR4 fccol_a = {1, 1, 1};
 
         const char fname[18] = "B747100_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
-        const char skindir[26] = "Boeing_747\\B747_100\\Skins";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+        const char skindir[27] = "Boeing_747\\B747_100\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
         char skinname[256];
 
         //Name of the textures to be applied.

@@ -19,9 +19,9 @@ const double B747AAC_EMPTYMASS = 183523; //Empty mass in kg.
 
 const double B747AAC_FUELMASS = 213370; //Fuel mass in kg.
 
-const double B747AAC_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747AAC_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747AAC_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747AAC_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -107,6 +107,7 @@ class B747AAC : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
         void ActivateDoors(DoorsStatus action);
         void CloseDoors(void);
         void UpdateDoorsAnimations(double);

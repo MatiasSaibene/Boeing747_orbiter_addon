@@ -20,9 +20,9 @@ const double B7478_EMPTYMASS = 190962; //Empty mass in kg.
 
 const double B7478_FUELMASS = 256734; //Fuel mass in kg.
 
-const double B7478_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B7478_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B7478_MAXMAINTH = 750e3;  //Max main thrust in kN.
+const double B7478_MAXMAINTH = 500e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -106,6 +106,7 @@ class B7478 : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
 
         double UpdateLvlEnginesContrail();
 
@@ -132,8 +133,7 @@ class B7478 : public VESSEL4{
         int clbkConsumeBufferedKey(int, bool, char *) override;
 
         bool clbkLoadVC(int) override;
-        //void clbkMFDMode(int, int) override;
-        //bool clbkVCRedrawEvent(int, int, SURFHANDLE) override;
+
 
         void clbkVisualCreated(VISHANDLE vis, int refcount) override;
         void clbkVisualDestroyed (VISHANDLE vis, int refcount) override;
@@ -185,6 +185,7 @@ class B7478 : public VESSEL4{
 
         const char fname[18] = "B7478_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[27] = "Boeing_747\\B747_8\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
+        char skinname[256];
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

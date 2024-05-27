@@ -20,9 +20,9 @@ const double B747YAL1_EMPTYMASS = 183523; //Empty mass in kg.
 
 const double B747YAL1_FUELMASS = 213370; //Fuel mass in kg.
 
-const double B747YAL1_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747YAL1_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747YAL1_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747YAL1_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -106,6 +106,7 @@ class B747YAL1 : public VESSEL4{
         void ActivateLandingGear(LandingGearStatus action);
         void SetGearDown(void);
         void UpdateLandingGearAnimation(double);
+        void UpdateGearStatus(void);
 
         double UpdateLvlEnginesContrail();
 

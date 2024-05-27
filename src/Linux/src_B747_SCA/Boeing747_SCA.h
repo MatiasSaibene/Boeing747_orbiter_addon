@@ -17,9 +17,9 @@ const double B747SCA_EMPTYMASS = 171840; //Empty mass in kg.
 
 const double B747SCA_FUELMASS = 168260; //Fuel mass in kg.
 
-const double B747SCA_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747SCA_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747SCA_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747SCA_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
