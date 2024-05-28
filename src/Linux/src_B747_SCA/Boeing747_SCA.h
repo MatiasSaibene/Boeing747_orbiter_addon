@@ -150,7 +150,7 @@ class B747SCA : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        BEACONLIGHTSPEC beacon[5];
+        BEACONLIGHTSPEC beacongreen[2], beaconred[2], beaconwhite[1];
         LightEmitter *l1, *l2, *l3, *l4, *cpl1, *cpl2, *fcl1, *fcl2, *fcl3, *fcl4, *fcl5, *fcl6, *fcl7, *fcl8, *fcl9, *fcl10, *fcl11, *fcl12;
 
 

@@ -599,20 +599,53 @@ void B747400::clbkSetClassCaps(FILEHANDLE cfg){
 
     //Define beacons
 
-    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
-    static VECTOR3 beaconcol = {0, 1, 0};
+    static VECTOR3 beaconpos_green[2] = { {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}};
 
-    for(int i = 0; i < 5; i++){
-		beacon[i].shape = BEACONSHAPE_STAR;
-		beacon[i].pos = beaconpos+i;
-		beacon[i].col = &beaconcol;
-		beacon[i].size = 1;
-		beacon[i].falloff = 0.4;
-		beacon[i].period = 1;
-		beacon[i].duration = 0.1;
-		beacon[i].tofs = 0.2;
-		beacon[i].active = false;
-		AddBeacon(beacon+i);
+    static VECTOR3 beaconpos_red[2] = {{Beacon1_left_wing_Location}, {Beacon4_belly_landing_gear_Location}};
+
+    static VECTOR3 beaconpos_white[1] = {Beacon5_APU_Location};
+
+    static VECTOR3 beaconcol_green = {0, 1, 0};
+    static VECTOR3 beaconcol_red = {1, 0, 0};
+    static VECTOR3 beaconcol_white = {1, 1, 1};
+
+    for(int i = 0; i < 2; i++){
+		beacongreen[i].shape = BEACONSHAPE_STAR;
+		beacongreen[i].pos = beaconpos_green+i;
+		beacongreen[i].col = &beaconcol_green;
+		beacongreen[i].size = 1;
+		beacongreen[i].falloff = 0.4;
+		beacongreen[i].period = 1;
+		beacongreen[i].duration = 0.1;
+		beacongreen[i].tofs = 0.2;
+		beacongreen[i].active = false;
+		AddBeacon(beacongreen+i);
+	}
+
+    for(int i = 0; i < 2; i++){
+		beaconred[i].shape = BEACONSHAPE_STAR;
+		beaconred[i].pos = beaconpos_red+i;
+		beaconred[i].col = &beaconcol_red;
+		beaconred[i].size = 1;
+		beaconred[i].falloff = 0.4;
+		beaconred[i].period = 1;
+		beaconred[i].duration = 0.1;
+		beaconred[i].tofs = 0.2;
+		beaconred[i].active = false;
+		AddBeacon(beaconred+i);
+	}
+
+    for(int i = 0; i < 1; i++){
+		beaconwhite[i].shape = BEACONSHAPE_STAR;
+		beaconwhite[i].pos = beaconpos_white+i;
+		beaconwhite[i].col = &beaconcol_white;
+		beaconwhite[i].size = 1;
+		beaconwhite[i].falloff = 0.4;
+		beaconwhite[i].period = 1;
+		beaconwhite[i].duration = 0.1;
+		beaconwhite[i].tofs = 0.2;
+		beaconwhite[i].active = false;
+		AddBeacon(beaconwhite+i);
 	}
 
 }
@@ -718,13 +751,30 @@ void B747400::ParkingBrake(){
 
 void B747400::ActivateBeacons(){
 
-    for(int i = 0; i < 5; i++){
-		if(!beacon[i].active){
-				beacon[i].active = true;
+    for(int i = 0; i < 2; i++){
+		if(!beacongreen[i].active){
+				beacongreen[i].active = true;
 		} else {
-				beacon[i].active = false;
+				beacongreen[i].active = false;
 		}
 	}
+
+    for(int i = 0; i < 2; i++){
+		if(!beaconred[i].active){
+				beaconred[i].active = true;
+		} else {
+				beaconred[i].active = false;
+		}
+	}
+
+    for(int i = 0; i < 1; i++){
+		if(!beaconwhite[i].active){
+				beaconwhite[i].active = true;
+		} else {
+				beaconwhite[i].active = false;
+		}
+	}
+    
 }
 
 void B747400::LightsControl(void){

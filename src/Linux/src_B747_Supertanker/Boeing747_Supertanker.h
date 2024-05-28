@@ -170,7 +170,7 @@ class B747ST : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4], wdisch[2];
         THGROUP_HANDLE thg_main, thg_retro, wdisch_main;
-        BEACONLIGHTSPEC beacon[5];
+        BEACONLIGHTSPEC beacongreen[2], beaconred[2], beaconwhite[1];
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         char skinpath[256];

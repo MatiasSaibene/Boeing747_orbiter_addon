@@ -479,82 +479,6 @@ void B7478::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B7478_MAXMAINTH/4), JET_A1, B7478_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B7478_MAXMAINTH/4), JET_A1, B7478_ISP);
 
-    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
-    THRUSTER_HANDLE th_rcs[24], th_group[4];
-        
-        //RCS1
-    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS2
-    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS3
-    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS4
-    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-    //Define RCS groups
-    th_group[0] = th_rcs[3];
-    th_group[1] = th_rcs[9];
-    th_group[2] = th_rcs[15];
-    th_group[3] = th_rcs[21];
-    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
-
-    th_group[0] = th_rcs[0];
-	th_group[1] = th_rcs[6];
-	th_group[2] = th_rcs[12];
-	th_group[3] = th_rcs[18];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
-
-	th_group[0] = th_rcs[10];
-	th_group[1] = th_rcs[22];
-	th_group[2] = th_rcs[1];
-	th_group[3] = th_rcs[13];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
-
-	th_group[0] = th_rcs[4];
-	th_group[1] = th_rcs[16];
-    th_group[2] = th_rcs[7];
-	th_group[3] = th_rcs[19];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
-
-	th_group[0] = th_rcs[6];
-	th_group[1] = th_rcs[15];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
-
-	th_group[0] = th_rcs[3];
-	th_group[1] = th_rcs[18];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
- */
-
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
@@ -600,20 +524,53 @@ void B7478::clbkSetClassCaps(FILEHANDLE cfg){
 
     //Define beacons
 
-    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
-    static VECTOR3 beaconcol = {0, 1, 0};
+    static VECTOR3 beaconpos_green[2] = { {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}};
 
-    for(int i = 0; i < 5; i++){
-		beacon[i].shape = BEACONSHAPE_STAR;
-		beacon[i].pos = beaconpos+i;
-		beacon[i].col = &beaconcol;
-		beacon[i].size = 1;
-		beacon[i].falloff = 0.4;
-		beacon[i].period = 1;
-		beacon[i].duration = 0.1;
-		beacon[i].tofs = 0.2;
-		beacon[i].active = false;
-		AddBeacon(beacon+i);
+    static VECTOR3 beaconpos_red[2] = {{Beacon1_left_wing_Location}, {Beacon4_belly_landing_gear_Location}};
+
+    static VECTOR3 beaconpos_white[1] = {Beacon5_APU_Location};
+
+    static VECTOR3 beaconcol_green = {0, 1, 0};
+    static VECTOR3 beaconcol_red = {1, 0, 0};
+    static VECTOR3 beaconcol_white = {1, 1, 1};
+
+    for(int i = 0; i < 2; i++){
+		beacongreen[i].shape = BEACONSHAPE_STAR;
+		beacongreen[i].pos = beaconpos_green+i;
+		beacongreen[i].col = &beaconcol_green;
+		beacongreen[i].size = 1;
+		beacongreen[i].falloff = 0.4;
+		beacongreen[i].period = 1;
+		beacongreen[i].duration = 0.1;
+		beacongreen[i].tofs = 0.2;
+		beacongreen[i].active = false;
+		AddBeacon(beacongreen+i);
+	}
+
+    for(int i = 0; i < 2; i++){
+		beaconred[i].shape = BEACONSHAPE_STAR;
+		beaconred[i].pos = beaconpos_red+i;
+		beaconred[i].col = &beaconcol_red;
+		beaconred[i].size = 1;
+		beaconred[i].falloff = 0.4;
+		beaconred[i].period = 1;
+		beaconred[i].duration = 0.1;
+		beaconred[i].tofs = 0.2;
+		beaconred[i].active = false;
+		AddBeacon(beaconred+i);
+	}
+
+    for(int i = 0; i < 1; i++){
+		beaconwhite[i].shape = BEACONSHAPE_STAR;
+		beaconwhite[i].pos = beaconpos_white+i;
+		beaconwhite[i].col = &beaconcol_white;
+		beaconwhite[i].size = 1;
+		beaconwhite[i].falloff = 0.4;
+		beaconwhite[i].period = 1;
+		beaconwhite[i].duration = 0.1;
+		beaconwhite[i].tofs = 0.2;
+		beaconwhite[i].active = false;
+		AddBeacon(beaconwhite+i);
 	}
 
 }
@@ -684,9 +641,6 @@ void B7478::ChangeLivery() {
     skin[3] = oapiLoadTexture(completedir_lw);
     skin[4] = oapiLoadTexture(completedir_eng);
 
-    skinlog = oapiOpenFile("skinlog.txt", FILE_OUT, ROOT);
-    oapiWriteLine(skinlog, completedir_eng);
-
     ApplyLivery();
 }
 
@@ -721,11 +675,27 @@ void B7478::ParkingBrake(){
 
 void B7478::ActivateBeacons(){
 
-    for(int i = 0; i < 5; i++){
-		if(!beacon[i].active){
-				beacon[i].active = true;
+    for(int i = 0; i < 2; i++){
+		if(!beacongreen[i].active){
+				beacongreen[i].active = true;
 		} else {
-				beacon[i].active = false;
+				beacongreen[i].active = false;
+		}
+	}
+
+    for(int i = 0; i < 2; i++){
+		if(!beaconred[i].active){
+				beaconred[i].active = true;
+		} else {
+				beaconred[i].active = false;
+		}
+	}
+
+    for(int i = 0; i < 1; i++){
+		if(!beaconwhite[i].active){
+				beaconwhite[i].active = true;
+		} else {
+				beaconwhite[i].active = false;
 		}
 	}
 }
