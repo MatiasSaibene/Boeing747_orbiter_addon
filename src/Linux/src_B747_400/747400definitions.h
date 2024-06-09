@@ -1,6 +1,5 @@
-#pragma once
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Tue Apr  9 17:36:56 2024
+// Date: Fri May 10 17:18:15 2024
 
 
 #include "Orbitersdk.h"
@@ -127,5 +126,6 @@
     constexpr VECTOR3 LIGHT1_Location =     {-5.0002, 3.5567, 7.8303};
     constexpr VECTOR3 LIGHT3_Location =     {4.0000, 3.5567, 8.7066};
     constexpr VECTOR3 LIGHT4_Location =     {4.9998, 3.5567, 7.8303};
+
 
 #endif
