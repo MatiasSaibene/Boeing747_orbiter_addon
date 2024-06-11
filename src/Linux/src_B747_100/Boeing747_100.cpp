@@ -20,6 +20,7 @@ bool lights_on;
 static int currentSkin = 0;
 bool bGearIsDown;
 bool engines_on;
+int enginevalue;
 
 
 // 1. vertical lift component
@@ -708,6 +709,7 @@ void B747100::LightsControl(void){
 void B747100::EnginesAutostart(void){
 
     engines_on = true;
+    enginevalue = 1;
     m_pXRSound->PlayWav(engines_start);
     
 }
@@ -715,6 +717,7 @@ void B747100::EnginesAutostart(void){
 void B747100::EnginesAutostop(void){
 
     engines_on = false;
+    enginevalue = 0;
     m_pXRSound->PlayWav(engines_shutdown);
     
 }
@@ -877,6 +880,13 @@ void B747100::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "ENG1.dds"); skin[4] = oapiLoadTexture(fname);
 
+        } else if (!strncasecmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%d", &enginevalue);
+            if(enginevalue == 1){
+                engines_on = true;
+            } else {
+                engines_on = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -892,6 +902,8 @@ void B747100::clbkSaveState(FILEHANDLE scn){
     oapiWriteScenario_string(scn, "GEAR", cbuf);
 
     oapiWriteScenario_string (scn, "SKIN", skinname);    
+
+    oapiWriteScenario_int(scn, "ENGINES", enginevalue);
 }
 
 //////////Logic for animations

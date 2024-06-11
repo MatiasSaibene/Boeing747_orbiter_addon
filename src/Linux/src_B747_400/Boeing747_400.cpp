@@ -20,6 +20,7 @@ bool lights_on;
 static int currentSkin = 0;
 bool bGearIsDown;
 bool engines_on;
+int enginevalue;
 
 
 // 1. vertical lift component
@@ -780,10 +781,10 @@ void B747400::ActivateBeacons(){
 void B747400::LightsControl(void){
 
     if(!lights_on){
-        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
 
         cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
         cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
@@ -845,6 +846,7 @@ void B747400::LightsControl(void){
 void B747400::EnginesAutostart(void){
 
     engines_on = true;
+    enginevalue = 1;
     m_pXRSound->PlayWav(engines_start);
     
 }
@@ -852,6 +854,7 @@ void B747400::EnginesAutostart(void){
 void B747400::EnginesAutostop(void){
 
     engines_on = false;
+    enginevalue = 0;
     m_pXRSound->PlayWav(engines_shutdown);
     
 }
@@ -941,25 +944,6 @@ bool B747400::clbkLoadVC(int id){
         break;
     }
 
-
-    //MFDs setup
-
-    /* static VCMFDSPEC mfds1 = {1, 20};
-    oapiVCRegisterMFD(MFD_LEFT, &mfds1);
-    
-    for(int index = 0; index < 12; ++index){
-		oapiVCRegisterArea((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_LBUP, PANEL_MAP_NONE, NULL);
-		oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDK << 16) | (index & 0xFFFF), MFD_BUTTON_POS[index], .02);
-	}
-
-    for(int index = 0; index < 3; ++index){
-        oapiVCRegisterArea((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), _R(0, 0, 1, 1), PANEL_REDRAW_NEVER,PANEL_MOUSE_LBDOWN, PANEL_MAP_NONE, NULL);
-        oapiVCSetAreaClickmode_Spherical((VC_CTRLSET_MFDC << 16) | (index & 0xFFFF), MFD_CTRL_POS[index], .02);
-    }
-
-    vcMfdTex = oapiGetTextureHandle(mhcockpit_mesh, TEX_MFDKEYS);
-	oapiVCRegisterArea(VC_AREA_MFDKEYS, _R(0, 0, 512, 512), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE, PANEL_MAP_BACKGROUND, vcMfdTex);
-*/
     return true; 
 
 }
@@ -1033,6 +1017,13 @@ void B747400::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "ENG1.dds"); skin[4] = oapiLoadTexture(fname);
 
+        } else if (!strncasecmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%d", &enginevalue);
+            if(enginevalue == 1){
+                engines_on = true;
+            } else {
+                engines_on = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -1048,6 +1039,9 @@ void B747400::clbkSaveState(FILEHANDLE scn){
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
     oapiWriteScenario_string (scn, "SKIN", skinname);
+
+    oapiWriteScenario_int(scn, "ENGINES", enginevalue);
+
 }
 
 //////////Logic for animations

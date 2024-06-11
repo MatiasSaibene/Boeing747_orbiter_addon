@@ -20,6 +20,7 @@ bool parkingBrakeEnabled;
 bool lights_on;
 bool bGearIsDown;
 bool engines_on;
+int enginevalue;
 
 
 // 1. vertical lift component
@@ -667,10 +668,10 @@ void B747AAC::ActivateBeacons(){
 void B747AAC::LightsControl(void){
 
     if(!lights_on){
-        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
 
         cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
         cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
@@ -694,6 +695,7 @@ void B747AAC::LightsControl(void){
 void B747AAC::EnginesAutostart(void){
 
     engines_on = true;
+    enginevalue = 1;
     m_pXRSound->PlayWav(engines_start);
     
 }
@@ -701,6 +703,7 @@ void B747AAC::EnginesAutostart(void){
 void B747AAC::EnginesAutostop(void){
 
     engines_on = false;
+    enginevalue = 0;
     m_pXRSound->PlayWav(engines_shutdown);
     
 }
@@ -805,6 +808,13 @@ void B747AAC::clbkLoadStateEx(FILEHANDLE scn, void *vs){
             } else {
                 bGearIsDown = false;
             }
+        } else if (!strncasecmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%d", &enginevalue);
+            if(enginevalue == 1){
+                engines_on = true;
+            } else {
+                engines_on = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -818,6 +828,8 @@ void B747AAC::clbkSaveState(FILEHANDLE scn){
     SaveDefaultState(scn);
     sprintf(cbuf, "%d %0.4f", landing_gear_status, landing_gear_proc);
     oapiWriteScenario_string(scn, "GEAR", cbuf);
+
+    oapiWriteScenario_int(scn, "ENGINES", enginevalue);
     
 }
 

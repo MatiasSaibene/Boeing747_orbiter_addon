@@ -21,6 +21,7 @@ bool lights_on;
 static int currentSkin = 0;
 bool bGearIsDown;
 bool engines_on;
+int enginevalue;
 
 
 // 1. vertical lift component
@@ -703,10 +704,10 @@ void B7478::ActivateBeacons(){
 void B7478::LightsControl(void){
 
     if(!lights_on){
-        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
 
         cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
         cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
@@ -768,6 +769,7 @@ void B7478::LightsControl(void){
 void B7478::EnginesAutostart(void){
 
     engines_on = true;
+    enginevalue = 1;
     m_pXRSound->PlayWav(engines_start);
     
 }
@@ -775,6 +777,7 @@ void B7478::EnginesAutostart(void){
 void B7478::EnginesAutostop(void){
 
     engines_on = false;
+    enginevalue = 0;
     m_pXRSound->PlayWav(engines_shutdown);
     
 }
@@ -948,6 +951,13 @@ void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
             } else {
                 engines_on = true;
             }
+        } else if (!strncasecmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%d", &enginevalue);
+            if(enginevalue == 1){
+                engines_on = true;
+            } else {
+                engines_on = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -964,11 +974,7 @@ void B7478::clbkSaveState(FILEHANDLE scn){
     
     oapiWriteScenario_string (scn, "SKIN", skinname);
 
-    if(!engines_on){
-        oapiWriteScenario_string(scn, "ENGINES", "OFF");
-    } else {
-        oapiWriteScenario_string(scn, "ENGINES", "ON");
-    }
+    oapiWriteScenario_int(scn, "ENGINES", enginevalue);
 
 }
 
