@@ -21,11 +21,11 @@ const double B747ST_FUELMASS = 168260; //Fuel mass in kg.
 
 const double B747ST_WATERMASS = 74200; //Water mass in kg.
 
-const double B747ST_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747ST_ISP = 32373; //Fuel-specific impulse in m/s.
 
 const double B747ST_WISP = 0.0625; //Specific impulse of water?. We are using this and WATERMASS to make a animation of water being discharged.
 
-const double B747ST_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747ST_MAXMAINTH = 400e3;  //Max main thrust in kN.
 
 const double B747ST_MAXWATERTH = 100; //?
 
@@ -136,7 +136,7 @@ class B747ST : public VESSEL4{
         void clbkPreStep(double, double, double) override;
         void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
-        virtual int clbkConsumeBufferedKey(DWORD, bool, char *) override;
+        int clbkConsumeBufferedKey(DWORD, bool, char *) override;
 
         bool clbkLoadVC(int) override;
 
@@ -170,7 +170,7 @@ class B747ST : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4], wdisch[2];
         THGROUP_HANDLE thg_main, thg_retro, wdisch_main;
-        BEACONLIGHTSPEC beacon[5];
+        BEACONLIGHTSPEC beacongreen[2], beaconred[2], beaconwhite[1];
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         char skinpath[256];
@@ -185,7 +185,6 @@ class B747ST : public VESSEL4{
 
         const char fname[17] = "B747ST_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[35] = "Boeing_747\\B747_Supertanker\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
-        char skinname[256];
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

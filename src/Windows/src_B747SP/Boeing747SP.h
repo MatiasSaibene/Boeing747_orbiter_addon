@@ -20,11 +20,9 @@ const double B747SP_EMPTYMASS = 147540; //Empty mass in kg.
 
 const double B747SP_FUELMASS = 190630; //Fuel mass in kg.
 
-const double B747SP_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747SP_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747SP_MAXMAINTH = 500e3; //Max main thrust in kN.
-
-//const double B747SP_MAXRCSTH = 58.0e3;
+const double B747SP_MAXMAINTH = 400e3; //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -150,7 +148,7 @@ class B747SP : public VESSEL4{
         void clbkPreStep(double, double, double) override;
         void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
-        virtual int clbkConsumeBufferedKey(DWORD, bool, char *) override;
+        int clbkConsumeBufferedKey(DWORD, bool, char *) override;
 
         bool clbkLoadVC(int) override;
 
@@ -186,7 +184,7 @@ class B747SP : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        BEACONLIGHTSPEC beacon[5];
+        BEACONLIGHTSPEC beacongreen[2], beaconred[2], beaconwhite[1];
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         char skinpath[256];
@@ -206,6 +204,7 @@ class B747SP : public VESSEL4{
         const char fname[17] = "B747SP_skins.txt";  //File where skin list is stored. Relative to ORBITER_ROOT.
         const char skindir[25] = "Boeing_747\\B747SP\\Skins\\";  //Path where actual skins are stored. Relative to ORBITER_ROOT\\Textures.
         char skinname[256];
+        
 
         //Name of the textures to be applied.
         const char texname_fus[14] = "\\Fuselage.dds";

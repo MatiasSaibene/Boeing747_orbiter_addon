@@ -2,10 +2,10 @@
 //Licenced under the MIT Licence
 
 //==========================================
-//          ORBITER MODULE: Boeing 747 YAL1
+//          ORBITER MODULE: Boeing 985-121 Microfighter
 //
-//Boeing747_YAL1.cpp
-//Control module for Boeing 747YAL1 vessel class
+//Boeing985_121.cpp
+//Control module for Boeing 985-121 vessel class
 //
 //==========================================
 
@@ -13,6 +13,8 @@
 #include "Boeing985_121.h"
 #include <cstring>
 #include <cstdio>
+#include <algorithm>
+#include <minwindef.h>
 
 bool parkingBrakeEnabled;
 bool lights_on;
@@ -298,8 +300,8 @@ void B985121::ActivateBeacons(){
 void B985121::LightsControl(void){
 
     if(!lights_on){
-        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
 
         lights_on = true;
     } else {

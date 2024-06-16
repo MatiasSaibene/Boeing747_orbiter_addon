@@ -20,9 +20,9 @@ const double B747400_EMPTYMASS = 183523; //Empty mass in kg.
 
 const double B747400_FUELMASS = 213370; //Fuel mass in kg.
 
-const double B747400_ISP = 2e4; //Fuel-specific impulse in m/s.
+const double B747400_ISP = 32373; //Fuel-specific impulse in m/s.
 
-const double B747400_MAXMAINTH = 500e3;  //Max main thrust in kN.
+const double B747400_MAXMAINTH = 450e3;  //Max main thrust in kN.
 
 const double LANDING_GEAR_OPERATING_SPEED = 0.06;
 
@@ -130,7 +130,7 @@ class B747400 : public VESSEL4{
         void clbkPreStep(double, double, double) override;
         void clbkPostCreation(void) override;
         void clbkPostStep(double, double, double) override;
-        virtual int clbkConsumeBufferedKey(DWORD, bool, char *) override;
+        int clbkConsumeBufferedKey(DWORD, bool, char *) override;
 
         bool clbkLoadVC(int) override;
         //void clbkMFDMode(int, int) override;
@@ -166,7 +166,7 @@ class B747400 : public VESSEL4{
         CTRLSURFHANDLE hlaileron, hraileron;
         THRUSTER_HANDLE th_main[4], th_retro[4];
         THGROUP_HANDLE thg_main, thg_retro;
-        BEACONLIGHTSPEC beacon[5];
+        BEACONLIGHTSPEC beacongreen[2], beaconred[2], beaconwhite[1];
         FILEHANDLE skinlist, skinlog;
         SURFHANDLE skin[5];
         SURFHANDLE vcMfdTex;

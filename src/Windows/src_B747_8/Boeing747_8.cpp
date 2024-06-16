@@ -9,20 +9,20 @@
 //
 //==========================================
 
-
-#include <stdio.h>
 #include <string.h>
 #define ORBITER_MODULE
 #include "Boeing747_8.h"
 #include <cstring>
 #include <cstdio>
-
+#include <algorithm>
+#include <minwindef.h>
 
 bool parkingBrakeEnabled;
 bool lights_on;
 static int currentSkin = 0;
 bool bGearIsDown;
 bool engines_on;
+int enginevalue;
 
 
 // 1. vertical lift component
@@ -481,82 +481,6 @@ void B7478::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B7478_MAXMAINTH/4), JET_A1, B7478_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B7478_MAXMAINTH/4), JET_A1, B7478_ISP);
 
-    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
-    THRUSTER_HANDLE th_rcs[24], th_group[4];
-        
-        //RCS1
-    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS2
-    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS3
-    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS4
-    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-    //Define RCS groups
-    th_group[0] = th_rcs[3];
-    th_group[1] = th_rcs[9];
-    th_group[2] = th_rcs[15];
-    th_group[3] = th_rcs[21];
-    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
-
-    th_group[0] = th_rcs[0];
-	th_group[1] = th_rcs[6];
-	th_group[2] = th_rcs[12];
-	th_group[3] = th_rcs[18];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
-
-	th_group[0] = th_rcs[10];
-	th_group[1] = th_rcs[22];
-	th_group[2] = th_rcs[1];
-	th_group[3] = th_rcs[13];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
-
-	th_group[0] = th_rcs[4];
-	th_group[1] = th_rcs[16];
-    th_group[2] = th_rcs[7];
-	th_group[3] = th_rcs[19];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
-
-	th_group[0] = th_rcs[6];
-	th_group[1] = th_rcs[15];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
-
-	th_group[0] = th_rcs[3];
-	th_group[1] = th_rcs[18];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
- */
-
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
         0, 0.5, .95, 120, 0.03, 10.0, 5, 3.0, 
@@ -602,20 +526,53 @@ void B7478::clbkSetClassCaps(FILEHANDLE cfg){
 
     //Define beacons
 
-    static VECTOR3 beaconpos[5] = {{Beacon1_left_wing_Location}, {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}, {Beacon4_belly_landing_gear_Location}, {Beacon5_APU_Location}};
-    static VECTOR3 beaconcol = {0, 1, 0};
+    static VECTOR3 beaconpos_green[2] = { {Beacon2_right_wing_Location}, {Beacon3_upper_deck_Location}};
 
-    for(int i = 0; i < 5; i++){
-		beacon[i].shape = BEACONSHAPE_STAR;
-		beacon[i].pos = beaconpos+i;
-		beacon[i].col = &beaconcol;
-		beacon[i].size = 1;
-		beacon[i].falloff = 0.4;
-		beacon[i].period = 1;
-		beacon[i].duration = 0.1;
-		beacon[i].tofs = 0.2;
-		beacon[i].active = false;
-		AddBeacon(beacon+i);
+    static VECTOR3 beaconpos_red[2] = {{Beacon1_left_wing_Location}, {Beacon4_belly_landing_gear_Location}};
+
+    static VECTOR3 beaconpos_white[1] = {Beacon5_APU_Location};
+
+    static VECTOR3 beaconcol_green = {0, 1, 0};
+    static VECTOR3 beaconcol_red = {1, 0, 0};
+    static VECTOR3 beaconcol_white = {1, 1, 1};
+
+    for(int i = 0; i < 2; i++){
+		beacongreen[i].shape = BEACONSHAPE_STAR;
+		beacongreen[i].pos = beaconpos_green+i;
+		beacongreen[i].col = &beaconcol_green;
+		beacongreen[i].size = 1;
+		beacongreen[i].falloff = 0.4;
+		beacongreen[i].period = 1;
+		beacongreen[i].duration = 0.1;
+		beacongreen[i].tofs = 0.2;
+		beacongreen[i].active = false;
+		AddBeacon(beacongreen+i);
+	}
+
+    for(int i = 0; i < 2; i++){
+		beaconred[i].shape = BEACONSHAPE_STAR;
+		beaconred[i].pos = beaconpos_red+i;
+		beaconred[i].col = &beaconcol_red;
+		beaconred[i].size = 1;
+		beaconred[i].falloff = 0.4;
+		beaconred[i].period = 1;
+		beaconred[i].duration = 0.1;
+		beaconred[i].tofs = 0.2;
+		beaconred[i].active = false;
+		AddBeacon(beaconred+i);
+	}
+
+    for(int i = 0; i < 1; i++){
+		beaconwhite[i].shape = BEACONSHAPE_STAR;
+		beaconwhite[i].pos = beaconpos_white+i;
+		beaconwhite[i].col = &beaconcol_white;
+		beaconwhite[i].size = 1;
+		beaconwhite[i].falloff = 0.4;
+		beaconwhite[i].period = 1;
+		beaconwhite[i].duration = 0.1;
+		beaconwhite[i].tofs = 0.2;
+		beaconwhite[i].active = false;
+		AddBeacon(beaconwhite+i);
 	}
 
 }
@@ -648,15 +605,14 @@ void B7478::NextSkin() {
 }
 
 void B7478::ChangeLivery() {
-        
+    
     char completedir_fus[256];
     char completedir_vs[256];
     char completedir_rw[256];
     char completedir_eng[256];
     char completedir_lw[256];
-    char SKINLIST[][7] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};  //I have no idea why, but this works. Seriously.
-
-
+    char SKINLIST[][15] = {"SKIN1", "SKIN2", "SKIN3", "SKIN4", "SKIN5", "SKIN6", "SKIN7", "SKIN8", "SKIN9", "SKIN10", "SKIN11", "SKIN12", "SKIN13", "SKIN14", "SKIN15"};
+    
     skinlist = oapiOpenFile(fname, FILE_IN, ROOT);
     oapiReadItem_string(skinlist, SKINLIST[currentSkin], skinname);
     
@@ -721,11 +677,27 @@ void B7478::ParkingBrake(){
 
 void B7478::ActivateBeacons(){
 
-    for(int i = 0; i < 5; i++){
-		if(!beacon[i].active){
-				beacon[i].active = true;
+    for(int i = 0; i < 2; i++){
+		if(!beacongreen[i].active){
+				beacongreen[i].active = true;
 		} else {
-				beacon[i].active = false;
+				beacongreen[i].active = false;
+		}
+	}
+
+    for(int i = 0; i < 2; i++){
+		if(!beaconred[i].active){
+				beaconred[i].active = true;
+		} else {
+				beaconred[i].active = false;
+		}
+	}
+
+    for(int i = 0; i < 1; i++){
+		if(!beaconwhite[i].active){
+				beaconwhite[i].active = true;
+		} else {
+				beaconwhite[i].active = false;
 		}
 	}
 }
@@ -733,10 +705,10 @@ void B7478::ActivateBeacons(){
 void B7478::LightsControl(void){
 
     if(!lights_on){
-        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
-        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 10000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l1 = AddSpotLight((LIGHT1_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l2 = AddSpotLight((LIGHT2_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l3 = AddSpotLight((LIGHT3_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
+        l4 = AddSpotLight((LIGHT4_Location), _V(0, 0, 1), 100000, 1e-3, 0, 2e-3, 25*RAD, 45*RAD, col_d, col_s, col_a);
 
         cpl1 = AddPointLight((PL1_Location), 1, 0.15, 0, 0.15, ccol_d, ccol_s, ccol_a);
         cpl1->SetVisibility(LightEmitter::VIS_COCKPIT);
@@ -798,6 +770,7 @@ void B7478::LightsControl(void){
 void B7478::EnginesAutostart(void){
 
     engines_on = true;
+    enginevalue = 1;
     m_pXRSound->PlayWav(engines_start);
     
 }
@@ -805,6 +778,7 @@ void B7478::EnginesAutostart(void){
 void B7478::EnginesAutostop(void){
 
     engines_on = false;
+    enginevalue = 0;
     m_pXRSound->PlayWav(engines_shutdown);
     
 }
@@ -824,6 +798,7 @@ void B7478::UpdateEnginesStatus(){
         pwr = 0;
     }
 }
+
 
 bool B7478::clbkLoadVC(int id){
 
@@ -941,10 +916,12 @@ int B7478::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate){
 void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
     
     char *line;
+    char engBoolvalue[3];
+    char ON[2];
 
     while(oapiReadScenario_nextline(scn, line)){
         if(!_strnicmp(line, "GEAR", 4)){
-            sscanf_s(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
+            sscanf(line+4, "%d%lf", (int *)&landing_gear_status, &landing_gear_proc);
             SetAnimation(anim_landing_gear, landing_gear_proc);
             if (landing_gear_proc == 1.0){
                 bGearIsDown = true;
@@ -952,7 +929,7 @@ void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
                 bGearIsDown = false;
             }
         } else if(!_strnicmp(line, "SKIN", 4)){
-            sscanf_s(line+4, "%s", skinpath);
+            sscanf(line+4, "%s", skinpath);
             char fname[256];
             strcpy(fname, "Boeing_747\\B747_400\\Skins\\");
             strcat(fname, skinpath);
@@ -968,6 +945,20 @@ void B7478::clbkLoadStateEx(FILEHANDLE scn, void *vs){
 
             strcpy(fname+n, "Left_wing.dds"); skin[4] = oapiLoadTexture(fname);
 
+        } else if(!_strnicmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%s", engBoolvalue);
+            if(strcmp(engBoolvalue, ON) != 0){
+                engines_on = false;
+            } else {
+                engines_on = true;
+            }
+        } else if (!_strnicmp(line, "ENGINES", 7)){
+            sscanf(line+7, "%d", &enginevalue);
+            if(enginevalue == 1){
+                engines_on = true;
+            } else {
+                engines_on = false;
+            }
         } else {
             ParseScenarioLineEx(line, vs);
         }
@@ -983,6 +974,8 @@ void B7478::clbkSaveState(FILEHANDLE scn){
     oapiWriteScenario_string(scn, "GEAR", cbuf);
     
     oapiWriteScenario_string (scn, "SKIN", skinname);
+
+    oapiWriteScenario_int(scn, "ENGINES", enginevalue);
 
 }
 
@@ -1001,12 +994,12 @@ void B7478::UpdateLandingGearAnimation(double simdt) {
     if (landing_gear_status >= GEAR_DEPLOYING) {
         double da = simdt * LANDING_GEAR_OPERATING_SPEED;
         if (landing_gear_status == GEAR_DEPLOYING) {
-            if (landing_gear_proc > 0.0) landing_gear_proc = max(0.0, landing_gear_proc - da);
+            if (landing_gear_proc > 0.0) landing_gear_proc = std::max(0.0, landing_gear_proc - da);
             else landing_gear_status = GEAR_DOWN;
             SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
             bGearIsDown = true;
         } else {
-            if (landing_gear_proc < 1.0) landing_gear_proc = min(1.0, landing_gear_proc + da);
+            if (landing_gear_proc < 1.0) landing_gear_proc = std::min(1.0, landing_gear_proc + da);
             else landing_gear_status = GEAR_UP;
             SetTouchdownPoints(tdvtx_gearup, ntdvtx_gearup);
             bGearIsDown = false;
@@ -1055,11 +1048,15 @@ void B7478::clbkPostCreation(){
 
     m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
 
-    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
+
+    m_pXRSound->LoadWav(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
 
-    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav");
+
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::RetroEngines, "XRSound\\Boeing747\\roar.wav");
 
     m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
 

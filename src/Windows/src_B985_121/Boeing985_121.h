@@ -77,7 +77,7 @@ class B985121 : public VESSEL4{
 
         void clbkSetClassCaps(FILEHANDLE cfg) override;
         void clbkPostStep(double, double, double) override;
-        virtual int clbkConsumeBufferedKey(DWORD, bool, char *) override;
+        int clbkConsumeBufferedKey(DWORD, bool, char *) override;
 
 
         MESHHANDLE B985121_mesh;  //Mesh handle
