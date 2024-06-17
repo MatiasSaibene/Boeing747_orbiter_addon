@@ -361,7 +361,7 @@ void B747400::DefineAnimations(void){
         RudderGrp,
         1,
         (Axis_rudder_Location),
-        _V(0, 1, 0),
+        _V(0, 1, -0.75),
         (float)(22.5*RAD)
     );
     anim_rudder = CreateAnimation(0.5);
@@ -373,7 +373,7 @@ void B747400::DefineAnimations(void){
         LAileronGrp,
         1,
         (Axis_laileron_Location),
-        _V(0.25, 0, 0),
+        _V(-1, 0, -0.75),
         (float)(45*RAD)
     );
 
@@ -383,7 +383,7 @@ void B747400::DefineAnimations(void){
         RAileronGrp,
         1,
         (Axis_raileron_Location),
-        _V(0.25, 0, 0),
+        _V(1, 0, -0.75),
         (float)(45*RAD)
     );
 
@@ -578,8 +578,8 @@ void B747400::clbkSetClassCaps(FILEHANDLE cfg){
     
     CreateAirfoil3(LIFT_HORIZONTAL, (Rudder_Location), HLiftCoeff, 0, B747400_HLIFT_C, B747400_HLIFT_S, B747400_HLIFT_A);
 
-    hlaileron = CreateControlSurface3(AIRCTRL_AILERON,8.3696, 1.7, (LAileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_raileron);
-    hraileron = CreateControlSurface3(AIRCTRL_AILERON, 8.3696, 1.7, (Raileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_laileron);
+    hlaileron = CreateControlSurface3(AIRCTRL_AILERON,8.3696, 1.7, (LAileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_laileron);
+    hraileron = CreateControlSurface3(AIRCTRL_AILERON, 8.3696, 1.7, (Raileron_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_raileron);
 
     CreateControlSurface3(AIRCTRL_ELEVATOR, (14.4997*2), 1.7, (Left_elevator_trim_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_elevator);
     CreateControlSurface3(AIRCTRL_ELEVATOR, (14.4997*2), 1.7, (Right_elevator_trim_Location), AIRCTRL_AXIS_AUTO, 1.0, anim_elevator);

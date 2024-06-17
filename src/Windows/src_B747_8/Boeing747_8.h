@@ -20,7 +20,8 @@ const double B7478_EMPTYMASS = 190962; //Empty mass in kg.
 
 const double B7478_FUELMASS = 256734; //Fuel mass in kg.
 
-const double B7478_ISP = 32373; //Fuel-specific impulse in m/s.
+const double B7478_ISP = 100000; //Fuel-specific impulse in m/s.
+//const double B7478_ISP = 32373; //Fuel-specific impulse in m/s.
 
 const double B7478_MAXMAINTH = 500e3;  //Max main thrust in kN.
 
