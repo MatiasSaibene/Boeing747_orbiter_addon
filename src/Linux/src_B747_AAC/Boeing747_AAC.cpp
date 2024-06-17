@@ -406,7 +406,7 @@ void B747AAC::DefineAnimations(void){
         RudderGrp,
         1,
         (Axis_rudder_Location),
-        _V(0, 1, 0),
+        _V(0, 1, -0.75),
         (float)(22.5*RAD)
     );
     anim_rudder = CreateAnimation(0.5);
@@ -418,7 +418,7 @@ void B747AAC::DefineAnimations(void){
         LAileronGrp,
         1,
         (Axis_laileron_Location),
-        _V(0.25, 0, 0),
+        _V(-1, 0, -0.75),
         (float)(45*RAD)
     );
 
@@ -428,7 +428,7 @@ void B747AAC::DefineAnimations(void){
         RAileronGrp,
         1,
         (Axis_raileron_Location),
-        _V(0.25, 0, 0),
+        _V(1, 0, -0.75),
         (float)(45*RAD)
     );
 
@@ -925,11 +925,11 @@ void B747AAC::clbkPostCreation(){
 
     m_pXRSound->LoadWav(engines_shutdown, "XRSound\\Boeing747\\747_APU_Shutdown.wav", XRSound::PlaybackType::BothViewFar);
 
-    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav", XRSound::PlaybackType::BothViewFar);
+    m_pXRSound->LoadWav(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav", XRSound::PlaybackType::BothViewFar);
 
     m_pXRSound->LoadWav(cabin_ambiance, "XRSound\\Boeing747\\747_cabin_ambiance.wav", XRSound::PlaybackType::InternalOnly);
 
-    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\747_Engine.wav");
+    m_pXRSound->SetDefaultSoundEnabled(XRSound::MainEngines, "XRSound\\Boeing747\\roar.wav");
 
     m_pXRSound->LoadWav(gear_movement, "XRSound\\Default\\Gear Whine.wav", XRSound::PlaybackType::BothViewMedium);
 

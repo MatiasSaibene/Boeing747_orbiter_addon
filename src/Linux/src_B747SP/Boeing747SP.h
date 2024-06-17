@@ -20,7 +20,8 @@ const double B747SP_EMPTYMASS = 147540; //Empty mass in kg.
 
 const double B747SP_FUELMASS = 190630; //Fuel mass in kg.
 
-const double B747SP_ISP = 32373; //Fuel-specific impulse in m/s.
+const double B747SP_ISP = 100000; //Fuel-specific impulse in m/s.
+//const double B747SP_ISP = 32373; //Fuel-specific impulse in m/s.
 
 const double B747SP_MAXMAINTH = 400e3; //Max main thrust in kN.
 

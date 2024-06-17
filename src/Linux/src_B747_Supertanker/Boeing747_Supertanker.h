@@ -21,7 +21,8 @@ const double B747ST_FUELMASS = 168260; //Fuel mass in kg.
 
 const double B747ST_WATERMASS = 74200; //Water mass in kg.
 
-const double B747ST_ISP = 32373; //Fuel-specific impulse in m/s.
+const double B747ST_ISP = 100000; //Fuel-specific impulse in m/s.
+//const double B747ST_ISP = 32373; //Fuel-specific impulse in m/s.
 
 const double B747ST_WISP = 0.0625; //Specific impulse of water?. We are using this and WATERMASS to make a animation of water being discharged.
 

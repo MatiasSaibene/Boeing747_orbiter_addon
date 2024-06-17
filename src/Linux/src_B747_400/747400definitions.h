@@ -1,12 +1,11 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Fri May 10 17:18:15 2024
+// Date: Tue Jun 11 17:35:44 2024
 
 
 #include "Orbitersdk.h"
 
-#ifndef __747400definitions_H
-#define __747400definitions_H
-
+#ifndef __Boeing_747_400_H
+#define __Boeing_747_400_H
 
     const UINT Fuselage_Id = 0;
     const UINT Vertical_stabilizer_Id = 1;
@@ -44,8 +43,9 @@
     const UINT ENG2_Id = 33;
     const UINT ENG3_blades_Id = 34;
     const UINT ENG3_Id = 35;
-    const UINT Right_wing_Id = 36;
-    const UINT Left_wing_Id = 37;
+    const UINT APU_engine_exhaust_Id = 36;
+    const UINT Right_wing_Id = 37;
+    const UINT Left_wing_Id = 38;
     constexpr VECTOR3 Right_wing_Location =     {8.9758, 4.0812, -1.1481};
     constexpr VECTOR3 Left_wing_Location =     {-9.0107, 4.0791, -1.1772};
     constexpr VECTOR3 Fuselage_Location =     {0.0000, 0.0000, 0.0000};
@@ -85,6 +85,7 @@
     constexpr VECTOR3 ENG3_blades_Location =     {11.2027, 1.9653, 3.9387};
     constexpr VECTOR3 ENG3_Location =     {11.2209, 1.9764, 2.7608};
     constexpr VECTOR3 Cockpit_offset_Location =     {0.0382, 8.4046, 24.3853};
+    constexpr VECTOR3 APU_engine_exhaust_Location =     {0.0250, 7.3308, -37.6146};
     constexpr VECTOR3 TDP1_Location =     {0.0229, 0.0052, 22.0571};
     constexpr VECTOR3 TDP2_Location =     {-5.3282, 0.0052, -16.2437};
     constexpr VECTOR3 TDP3_Location =     {5.3410, 0.0052, -16.2440};
@@ -126,6 +127,5 @@
     constexpr VECTOR3 LIGHT1_Location =     {-5.0002, 3.5567, 7.8303};
     constexpr VECTOR3 LIGHT3_Location =     {4.0000, 3.5567, 8.7066};
     constexpr VECTOR3 LIGHT4_Location =     {4.9998, 3.5567, 7.8303};
-
 
 #endif

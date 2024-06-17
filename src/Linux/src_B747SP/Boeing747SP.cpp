@@ -360,7 +360,7 @@ void B747SP::DefineAnimations(void){
         RudderGrp,
         1,
         (Axis_rudder_Location),
-        _V(0, 1, 0),
+        _V(0, 1, -0.75),
         (float)(22.5*RAD)
     );
     anim_rudder = CreateAnimation(0.5);
@@ -372,7 +372,7 @@ void B747SP::DefineAnimations(void){
         LAileronGrp,
         1,
         (Axis_laileron_Location),
-        _V(0.25, 0, 0),
+        _V(-1, 0, -0.75),
         (float)(45*RAD)
     );
 
@@ -382,7 +382,7 @@ void B747SP::DefineAnimations(void){
         RAileronGrp,
         1,
         (Axis_raileron_Location),
-        _V(0.25, 0, 0),
+        _V(1, 0, -0.75),
         (float)(45*RAD)
     );
 
