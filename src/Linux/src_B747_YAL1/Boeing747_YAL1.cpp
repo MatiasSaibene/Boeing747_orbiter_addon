@@ -707,6 +707,12 @@ void B747YAL1::UpdateEnginesStatus(){
 
 bool B747YAL1::clbkLoadVC(int id){
 
+    static VCMFDSPEC mfds_1 = {1, MFD1_Id};
+    oapiVCRegisterMFD(MFD_LEFT, &mfds_1);
+
+    static VCMFDSPEC mfds_2 = {1, MFD2_Id};
+    oapiVCRegisterMFD(MFD_RIGHT, &mfds_2);
+
     switch(id){
         case 0 : //Commander
             SetCameraOffset(Captains_camera_Location);

@@ -393,6 +393,66 @@ void B747100::DefineAnimations(void){
 
     AddAnimationComponent(anim_laileron, 0, 1, &LAileron);
     AddAnimationComponent(anim_raileron, 0, 1, &RAileron);
+
+    //Cockpit animations
+
+    static unsigned int LYokeColumnGrp[2] = {LYoke_column_Id, LYoke_Id};
+    static MGROUP_ROTATE LYokeColumn(
+        uimesh_Cockpit,
+        LYokeColumnGrp,
+        2,
+        (Axis_LYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    static unsigned int RYokeColumnGrp[2] = {RYoke_column_Id, RYoke_Id};
+    static MGROUP_ROTATE RYokeColumn(
+        uimesh_Cockpit,
+        RYokeColumnGrp,
+        2,
+        (Axis_RYoke_column_Location),
+        _V(-1, 0, 0),
+        (float)(30*RAD)
+    );
+
+    AddAnimationComponent(anim_elevator, 0, 1, &LYokeColumn);
+    AddAnimationComponent(anim_elevator, 0, 1, &RYokeColumn);
+
+    static unsigned int LYokeGrp[1] = {LYoke_Id};
+    static MGROUP_ROTATE LYoke(
+        uimesh_Cockpit,
+        LYokeGrp,
+        1,
+        (LYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    static unsigned int RYokeGrp[1] = {RYoke_Id};
+    static MGROUP_ROTATE RYoke(
+        uimesh_Cockpit,
+        RYokeGrp,
+        1,
+        (RYoke_Location),
+        _V(0, 0, -1),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_laileron, 0, 1, &LYoke);
+    AddAnimationComponent(anim_laileron, 0, 1, &RYoke);
+
+    static unsigned int GearLeverGrp[1] = {Landing_gear_lever_Id};
+    static MGROUP_ROTATE GearLever(
+        uimesh_Cockpit,
+        GearLeverGrp,
+        1,
+        (Axis_landing_gear_lever_Location),
+        _V(1, 0, 0),
+        (float)(90*RAD)
+    );
+
+    AddAnimationComponent(anim_landing_gear, 0, 0.1, &GearLever);
 }
 
 // Overloaded callback functions
@@ -739,6 +799,12 @@ void B747100::UpdateEnginesStatus(){
 }
 
 bool B747100::clbkLoadVC(int id){
+
+    static VCMFDSPEC mfds_1 = {1, MFD1_Id};
+    oapiVCRegisterMFD(MFD_LEFT, &mfds_1);
+
+    static VCMFDSPEC mfds_2 = {1, MFD2_Id};
+    oapiVCRegisterMFD(MFD_RIGHT, &mfds_2);
 
     switch(id){
         case 0 : //Commander

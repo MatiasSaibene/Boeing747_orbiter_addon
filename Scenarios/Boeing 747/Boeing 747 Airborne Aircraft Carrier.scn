@@ -25,16 +25,13 @@ BEGIN_HUD
 END_HUD
 
 BEGIN_MFD Left
-  TYPE Launch
-  NAV 0
+  TYPE Surface
+  SPDMODE 1
 END_MFD
 
 BEGIN_MFD Right
-  TYPE Orbit
-  PROJ Ship
-  FRAME Ecliptic
-  ALT
-  REF Earth
+  TYPE Surface
+  SPDMODE 1
 END_MFD
 
 BEGIN_SHIPS

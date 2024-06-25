@@ -1,12 +1,11 @@
 // Auto generated code file.  Blender: 3.3.9  Blender Tools: (2, 1, 3)
-// Date: Sat Feb 10 18:35:18 2024
+// Date: Tue Jun 25 13:47:33 2024
 
-#pragma once
 
 #include "Orbitersdk.h"
 
-#ifndef __747cockpitdefinitions_H
-#define __747cockpitdefinitions_H
+#ifndef __Boeing_747_cockpit_H
+#define __Boeing_747_cockpit_H
 
 
     const UINT Autopilot_panel_Id = 0;
@@ -55,7 +54,10 @@
     const UINT RYoke_Id = 43;
     const UINT RYoke_column_Id = 44;
     const UINT RYoke_column_pedestal_Id = 45;
-    const UINT Upper_panel_Id = 46;
+    const UINT Seat_Cube_Id = 46;
+    const UINT Seat_Cube001_Id = 47;
+    const UINT Seat_Cube002_Id = 48;
+    const UINT Upper_panel_Id = 49;
     constexpr VECTOR3 Axis_LYoke_column_Location =     {-0.6843, 7.7549, 22.7443};
     constexpr VECTOR3 Axis_RYoke_column_Location =     {0.7956, 7.7505, 22.7433};
     constexpr VECTOR3 Axis_landing_gear_lever_Location =     {0.1746, 8.1530, 22.9745};
