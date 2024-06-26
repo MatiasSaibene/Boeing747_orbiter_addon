@@ -480,81 +480,6 @@ void B747400::clbkSetClassCaps(FILEHANDLE cfg){
     th_retro[2] = CreateThruster((ENG3_Location), _V(0, 0, -1), (B747400_MAXMAINTH/4), JET_A1, B747400_ISP);
     th_retro[3] = CreateThruster((ENG4_Location), _V(0, 0, -1), (B747400_MAXMAINTH/4), JET_A1, B747400_ISP);
 
-    /* //RCS setup, Wait what?. Yes RCS, its a cheat to make LVL Horizon Autopilot work. Shh...
-    THRUSTER_HANDLE th_rcs[24], th_group[4];
-        
-        //RCS1
-    th_rcs[0] = CreateThruster((RCS1_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[1] = CreateThruster((RCS1_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[2] = CreateThruster((RCS1_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[3] = CreateThruster((RCS1_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[4] = CreateThruster((RCS1_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[5] = CreateThruster((RCS1_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS2
-    th_rcs[6] = CreateThruster((RCS2_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[7] = CreateThruster((RCS2_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[8] = CreateThruster((RCS2_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[9] = CreateThruster((RCS2_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[10] = CreateThruster((RCS2_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[11] = CreateThruster((RCS2_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS3
-    th_rcs[12] = CreateThruster((RCS3_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[13] = CreateThruster((RCS3_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[14] = CreateThruster((RCS3_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[15] = CreateThruster((RCS3_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[16] = CreateThruster((RCS3_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[17] = CreateThruster((RCS3_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-
-        //RCS4
-    th_rcs[18] = CreateThruster((RCS4_Location), _V(1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[19] = CreateThruster((RCS4_Location), _V(0,1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[20] = CreateThruster((RCS4_Location), _V(0,0, 1), B747SP_MAXRCSTH, JET_A1);
-
-    th_rcs[21] = CreateThruster((RCS4_Location), _V(-1,0, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[22] = CreateThruster((RCS4_Location), _V(0,-1, 0), B747SP_MAXRCSTH, JET_A1);
-    th_rcs[23] = CreateThruster((RCS4_Location), _V(0,0, -1), B747SP_MAXRCSTH, JET_A1);
-
-    //Define RCS groups
-    th_group[0] = th_rcs[3];
-    th_group[1] = th_rcs[9];
-    th_group[2] = th_rcs[15];
-    th_group[3] = th_rcs[21];
-    CreateThrusterGroup(th_group, 4, THGROUP_ATT_PITCHUP);
-
-    th_group[0] = th_rcs[0];
-	th_group[1] = th_rcs[6];
-	th_group[2] = th_rcs[12];
-	th_group[3] = th_rcs[18];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_PITCHDOWN);
-
-	th_group[0] = th_rcs[10];
-	th_group[1] = th_rcs[22];
-	th_group[2] = th_rcs[1];
-	th_group[3] = th_rcs[13];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKLEFT);
-
-	th_group[0] = th_rcs[4];
-	th_group[1] = th_rcs[16];
-    th_group[2] = th_rcs[7];
-	th_group[3] = th_rcs[19];
-	CreateThrusterGroup (th_group, 4, THGROUP_ATT_BANKRIGHT);
-
-	th_group[0] = th_rcs[6];
-	th_group[1] = th_rcs[15];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWLEFT);
-
-	th_group[0] = th_rcs[3];
-	th_group[1] = th_rcs[18];
-	CreateThrusterGroup (th_group, 2, THGROUP_ATT_YAWRIGHT);
- */
 
 	//Contrail effect on engines
     static PARTICLESTREAMSPEC engines_contrails = {
@@ -877,6 +802,12 @@ void B747400::UpdateEnginesStatus(){
 }
 
 bool B747400::clbkLoadVC(int id){
+
+    static VCMFDSPEC mfds_1 = {1, MFD1_Id};
+    oapiVCRegisterMFD(MFD_LEFT, &mfds_1);
+
+    static VCMFDSPEC mfds_2 = {1, MFD2_Id};
+    oapiVCRegisterMFD(MFD_RIGHT, &mfds_2);
 
     switch(id){
         case 0 : //Commander
